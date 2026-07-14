@@ -42,6 +42,8 @@ class Permission(str, Enum):
 
     PRODUCT_EXPORT = "product.export"
 
+    PRODUCT_STOCK_OPNAME = "product.stock.opname"
+
     CATEGORY_VIEW = "category.view"
     CATEGORY_CREATE = "category.create"
     CATEGORY_UPDATE = "category.update"

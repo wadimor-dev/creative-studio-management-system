@@ -9,8 +9,8 @@ from app.schemas.product_movement import ProductStockResponse, StockOpnameReques
 from app.common.responses import SuccessResponse, create_success_response
 from app.models.product_movement import ProductMovement, ProductMovementType
 from app.dependencies.auth import get_current_user
-from app.dependencies.permission import RequireRole
-from app.constants.role import RoleType
+from app.dependencies.permission import RequirePermission
+from app.constants.permissions import Permission
 from app.models.user import User
 
 router = APIRouter()
@@ -50,7 +50,7 @@ def get_stocks(
     
     return create_success_response(data=stocks, message="Stocks fetched successfully")
 
-@router.post("/opname", response_model=SuccessResponse[dict], dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("/opname", response_model=SuccessResponse[dict], dependencies=[Depends(RequirePermission(Permission.PRODUCT_STOCK_OPNAME))])
 def perform_stock_opname(
     request: StockOpnameRequest,
     db: Session = Depends(get_db),
