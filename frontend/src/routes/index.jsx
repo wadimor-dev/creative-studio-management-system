@@ -55,7 +55,7 @@ const AppRoutes = () => {
           <Route path="/work" element={<WorkWorkspace />} />
           
           {/* Inventory Routes */}
-        <Route element={<ProtectedRoute permission="INVENTORY" />}>
+        <Route element={<ProtectedRoute permission="INVENTORY" />}>ll.
           <Route path="inventory">
             <Route index element={<InventoryDashboard />} />
             <Route path="items" element={<ItemsList />} />
