@@ -53,3 +53,14 @@ class Permission(str, Enum):
     LOCATION_CREATE = "location.create"
     LOCATION_UPDATE = "location.update"
     LOCATION_DELETE = "location.delete"
+
+    WORK_VIEW = "work.view"
+    WORK_CREATE = "work.create"
+    WORK_START = "work.start"
+    WORK_PAUSE = "work.pause"
+    WORK_RESUME = "work.resume"
+    WORK_CANCEL = "work.cancel"
+    WORK_FINISH = "work.finish"
+
+    WORK_EVIDENCE_UPLOAD = "work.evidence.upload"
+    WORK_EVIDENCE_VIEW = "work.evidence.view"

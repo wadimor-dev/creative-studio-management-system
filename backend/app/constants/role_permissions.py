@@ -57,11 +57,16 @@ ROLE_PERMISSIONS = {
         Permission.LOCATION_UPDATE,
         Permission.LOCATION_DELETE,
 
-        
+        Permission.WORK_VIEW,
+        Permission.WORK_CREATE,
+        Permission.WORK_START,
+        Permission.WORK_PAUSE,
+        Permission.WORK_RESUME,
+        Permission.WORK_CANCEL,
+        Permission.WORK_FINISH,
 
-        
-
-        
+        Permission.WORK_EVIDENCE_UPLOAD,
+        Permission.WORK_EVIDENCE_VIEW,
     },
 
     RoleType.STAFF: {
