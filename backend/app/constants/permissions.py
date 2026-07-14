@@ -48,3 +48,8 @@ class Permission(str, Enum):
     CATEGORY_CREATE = "category.create"
     CATEGORY_UPDATE = "category.update"
     CATEGORY_DELETE = "category.delete"
+
+    LOCATION_VIEW = "location.view"
+    LOCATION_CREATE = "location.create"
+    LOCATION_UPDATE = "location.update"
+    LOCATION_DELETE = "location.delete"
