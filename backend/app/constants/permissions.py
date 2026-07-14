@@ -30,4 +30,4 @@ class Permission(str, Enum):
     PRODUCT_UPDATE = "product.update"
     PRODUCT_DELETE = "product.delete"
 
-    PRODUCT_EXPORT = "product.export"
+    PRODUCT_EXPORT = "product.exportn

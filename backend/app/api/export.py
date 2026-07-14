@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.services.export import export_manager, RendererType, RenderContext
 from app.repositories.item_repository import item_repo
-from app.dependencies.permission import RequireRole
-from app.constants.role import RoleType
+from app.dependencies.permission import RequirePermission
+from app.constants.permissions import Permission
 from app.models.product_movement import ProductMovement
 from sqlalchemy.orm import joinedload
 from app.models.export_log import ExportLog
@@ -19,7 +19,11 @@ router = APIRouter()
 def get_basic_context(orientation="P"):
     return RenderContext(orientation=orientation, page_size="A4")
 
-@router.post("/items/excel", dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("/items/excel", dependencies=[Depends(Depends(
+    RequirePermission(
+        Permission.INVENTORY_EXPORT
+    )
+))])
 def export_items_excel(
     category_id: int | None = None,
     location_id: int | None = None,
@@ -52,7 +56,7 @@ def export_items_excel(
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-@router.post("/items/pdf", dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("/items/pdf", dependencies=[Depends(RequirePermission(Permission.INVENTORY_EXPORT))])
 def export_items_pdf(
     category_id: int | None = None,
     location_id: int | None = None,
@@ -81,7 +85,7 @@ def export_items_pdf(
     
     return StreamingResponse(stream, headers=headers_res, media_type="application/pdf")
 
-@router.post("/product-movements/excel", dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("/product-movements/excel", dependencies=[Depends(RequirePermission(Permission.PRODUCT_EXPORT))])
 def export_product_movements_excel(
     product_id: int | None = None,
     location_id: int | None = None,
@@ -141,7 +145,7 @@ def export_product_movements_excel(
     
     return StreamingResponse(stream, headers=headers_res, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-@router.post("/product-movements/pdf", dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("/product-movements/pdf", dependencies=[Depends(RequirePermission(Permission.PRODUCT_EXPORT))])
 def export_product_movements_pdf(
     product_id: int | None = None,
     location_id: int | None = None,
@@ -199,7 +203,7 @@ def export_product_movements_pdf(
     
     return StreamingResponse(stream, headers=headers_res, media_type="application/pdf")
 
-@router.post("/reports/excel", dependencies=[Depends(RequireRole([RoleType.ADMIN]))])
+@router.post("/reports/excel", dependencies=[Depends(RequirePermission(Permission.REPORT_EXPORT))])
 def export_reports_excel(
     type: str = "daily",
     date: str | None = None,
@@ -245,7 +249,7 @@ def export_reports_excel(
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-@router.post("/reports/pdf", dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("/reports/pdf", dependencies=[Depends(RequirePermission(Permission.REPORT_EXPORT))])
 def export_reports_pdf(
     type: str = "daily",
     date: str | None = None,
@@ -286,7 +290,7 @@ def export_reports_pdf(
     
     return StreamingResponse(stream, headers=headers_res, media_type="application/pdf")
 
-@router.post("/inventory-transactions/excel", dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("/inventory-transactions/excel", dependencies=[Depends(RequirePermission(Permission.INVENTORY_TRANSACTIONEXPORT))])
 def export_inventory_transactions_excel(
     item_id: int | None = None,
     user_id: int | None = None,
@@ -337,7 +341,7 @@ def export_inventory_transactions_excel(
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-@router.post("/inventory-transactions/pdf", dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("/inventory-transactions/pdf", dependencies=[Depends(RequirePermission(Permission.INVENTORY_TRANSACTION_EXPORT))])
 def export_inventory_transactions_pdf(
     item_id: int | None = None,
     user_id: int | None = None,
