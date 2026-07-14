@@ -30,6 +30,11 @@ class Permission(str, Enum):
     PRODUCT_UPDATE = "product.update"
     PRODUCT_DELETE = "product.delete"
 
+    PRODUCT_MASTER_VIEW = "product.master.view"
+    PRODUCT_MASTER_CREATE = "product.master.create"
+    PRODUCT_MASTER_UPDATE = "product.master.update"
+    PRODUCT_MASTER_DELETE = "product.master.delete"
+
     PRODUCT_EXPORT = "product.export"
 
     CATEGORY_VIEW = "category.view"

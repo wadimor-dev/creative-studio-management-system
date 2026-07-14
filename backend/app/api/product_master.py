@@ -6,8 +6,8 @@ from app.database.session import get_db
 from app.models.product_master import ProductType, ProductCategory, ProductMotif, ProductSubMotif, ProductColor
 from app.schemas.product_master import ProductMasterCreate, ProductMasterUpdate, ProductMasterResponse
 from app.common.responses import SuccessResponse, create_success_response
-from app.dependencies.permission import RequireRole
-from app.constants.role import RoleType
+from app.dependencies.permission import RequirePermission
+from app.constants.permissions import Permission
 from app.exceptions.base import CSMSException
 
 router = APIRouter()
@@ -24,13 +24,13 @@ def _get_model(entity_type: str) -> Type[Any]:
         raise CSMSException(f"Invalid entity type: {entity_type}", status_code=400)
     return mapping[entity_type]
 
-@router.get("/{entity_type}", response_model=SuccessResponse[List[ProductMasterResponse]])
+@router.get("/{entity_type}", response_model=SuccessResponse[List[ProductMasterResponse]], dependencies=[Depends(RequirePermission(Permission.PRODUCT_MASTER_VIEW))])
 def get_master_data(entity_type: str, db: Session = Depends(get_db)):
     model = _get_model(entity_type)
     items = db.query(model).all()
     return create_success_response(data=items, message=f"{entity_type.capitalize()} fetched successfully")
 
-@router.post("/{entity_type}", response_model=SuccessResponse[ProductMasterResponse], dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("/{entity_type}", response_model=SuccessResponse[ProductMasterResponse], dependencies=[Depends(RequirePermission(Permission.PRODUCT_MASTER_CREATE))])
 def create_master_data(entity_type: str, item_in: ProductMasterCreate, db: Session = Depends(get_db)):
     model = _get_model(entity_type)
     
@@ -49,7 +49,7 @@ def create_master_data(entity_type: str, item_in: ProductMasterCreate, db: Sessi
     db.refresh(item)
     return create_success_response(data=item, message=f"{entity_type.capitalize()} created successfully")
 
-@router.put("/{entity_type}/{item_id}", response_model=SuccessResponse[ProductMasterResponse], dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.put("/{entity_type}/{item_id}", response_model=SuccessResponse[ProductMasterResponse], dependencies=[Depends(RequirePermission(Permission.PRODUCT_MASTER_UPDATE))])
 def update_master_data(entity_type: str, item_id: int, item_in: ProductMasterUpdate, db: Session = Depends(get_db)):
     model = _get_model(entity_type)
     item = db.query(model).filter(model.id == item_id).first()
@@ -74,7 +74,7 @@ def update_master_data(entity_type: str, item_id: int, item_in: ProductMasterUpd
     db.refresh(item)
     return create_success_response(data=item, message=f"{entity_type.capitalize()} updated successfully")
 
-@router.delete("/{entity_type}/{item_id}", response_model=SuccessResponse[dict], dependencies=[Depends(RequireRole([RoleType.ADMIN]))])
+@router.delete("/{entity_type}/{item_id}", response_model=SuccessResponse[dict], dependencies=[Depends(RequirePermission(Permission.PRODUCT_MASTER_DELETE))])
 def delete_master_data(entity_type: str, item_id: int, db: Session = Depends(get_db)):
     model = _get_model(entity_type)
     item = db.query(model).filter(model.id == item_id).first()
