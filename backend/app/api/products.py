@@ -8,8 +8,8 @@ from app.models.product_master import ProductType, ProductCategory, ProductMotif
 from app.schemas.product import ProductCreate, ProductUpdate, ProductResponse
 from app.common.responses import SuccessResponse, create_success_response
 from app.common.pagination import PaginatedResponse, create_paginated_response, PaginationParams
-from app.dependencies.permission import RequireRole
-from app.constants.role import RoleType
+from app.dependencies.permission import RequirePermission
+from app.constants.permissions import Permission
 from app.exceptions.base import CSMSException
 
 router = APIRouter()
@@ -55,7 +55,7 @@ def _generate_product_identity(db: Session, product_in, product_id: int = 0):
     return sku, display_name
 
 
-@router.get("", response_model=PaginatedResponse[ProductResponse])
+@router.get("", response_model=PaginatedResponse[ProductResponse], dependencies=[Depends(RequirePermission(Permission.PRODUCT_VIEW))])
 def get_products(
     type_id: int = None,
     category_id: int = None,
@@ -95,7 +95,7 @@ def get_products(
         message="Products fetched successfully"
     )
 
-@router.post("", response_model=SuccessResponse[ProductResponse], status_code=status.HTTP_201_CREATED, dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("", response_model=SuccessResponse[ProductResponse], status_code=status.HTTP_201_CREATED, dependencies=[Depends(RequirePermission(Permission.PRODUCT_CREATE))])
 def create_product(product_in: ProductCreate, db: Session = Depends(get_db)):
     # Validate and generate temp SKU & name
     _, display_name = _generate_product_identity(db, product_in, 0)
@@ -113,7 +113,7 @@ def create_product(product_in: ProductCreate, db: Session = Depends(get_db)):
     db.refresh(product)
     return create_success_response(data=product, message="Product created successfully")
 
-@router.put("/{product_id}", response_model=SuccessResponse[ProductResponse], dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.put("/{product_id}", response_model=SuccessResponse[ProductResponse], dependencies=[Depends(RequirePermission(Permission.PRODUCT_UPDATE))])
 def update_product(product_id: int, product_in: ProductUpdate, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
@@ -144,7 +144,7 @@ def update_product(product_id: int, product_in: ProductUpdate, db: Session = Dep
     db.refresh(product)
     return create_success_response(data=product, message="Product updated successfully")
 
-@router.delete("/{product_id}", response_model=SuccessResponse[dict], dependencies=[Depends(RequireRole([RoleType.ADMIN]))])
+@router.delete("/{product_id}", response_model=SuccessResponse[dict], dependencies=[Depends(RequirePermission(Permission.PRODUCT_DELETE))])
 def delete_product(product_id: int, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
