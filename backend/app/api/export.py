@@ -19,11 +19,7 @@ router = APIRouter()
 def get_basic_context(orientation="P"):
     return RenderContext(orientation=orientation, page_size="A4")
 
-@router.post("/items/excel", dependencies=[Depends(Depends(
-    RequirePermission(
-        Permission.INVENTORY_EXPORT
-    )
-))])
+@router.post("/items/excel", dependencies=[Depends(RequirePermission(Permission.INVENTORY_EXPORT))])
 def export_items_excel(
     category_id: int | None = None,
     location_id: int | None = None,
@@ -290,7 +286,7 @@ def export_reports_pdf(
     
     return StreamingResponse(stream, headers=headers_res, media_type="application/pdf")
 
-@router.post("/inventory-transactions/excel", dependencies=[Depends(RequirePermission(Permission.INVENTORY_TRANSACTIONEXPORT))])
+@router.post("/inventory-transactions/excel", dependencies=[Depends(RequirePermission(Permission.INVENTORY_TRANSACTION_EXPORT))])
 def export_inventory_transactions_excel(
     item_id: int | None = None,
     user_id: int | None = None,
