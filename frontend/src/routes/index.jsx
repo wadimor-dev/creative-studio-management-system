@@ -29,7 +29,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const HomeRedirect = () => {
   const { user } = useAuth();
-  if (user?.role?.name === 'STAFF') {
+  if (user?.role?.name === 'ADMIN') {
     return <Navigate to="/work" replace />;
   }
   return <Navigate to="/dashboard" replace />;
