@@ -14,7 +14,7 @@ const ProductsTabs = () => {
   ];
 
   return (
-    <div className="mb-6 border-b border-slate-200">
+    <div className="overflow-x-auto overflow-y-hidden mb-6 border-b border-slate-200">
       <nav className="-mb-px flex space-x-8" aria-label="Tabs">
         {tabs.map((tab) => {
           const isActive = currentPath === tab.href || (currentPath.startsWith(tab.href) && tab.href !== '/products');

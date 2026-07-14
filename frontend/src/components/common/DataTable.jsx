@@ -1,7 +1,6 @@
 import React from 'react';
 import LoadingSpinner from './LoadingSpinner';
 import EmptyState from './EmptyState';
-
 const DataTable = ({
   columns,
   data,
@@ -12,7 +11,7 @@ const DataTable = ({
   pagination,
 }) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-w-0 w-full">
       <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div className="overflow-hidden shadow sm:rounded-lg">
@@ -75,5 +74,4 @@ const DataTable = ({
     </div>
   );
 };
-
 export default DataTable;
