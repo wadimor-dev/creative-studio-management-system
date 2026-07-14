@@ -52,7 +52,10 @@ const AppRoutes = () => {
           <Route element={<ProtectedRoute permission="DASHBOARD" />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
+
+        <Route element={<ProtectedRoute permission="WORK" />}>
           <Route path="/work" element={<WorkWorkspace />} />
+        </Route>
           
           {/* Inventory Routes */}
         <Route element={<ProtectedRoute permission="INVENTORY" />}>ll.

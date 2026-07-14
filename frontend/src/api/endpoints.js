@@ -7,6 +7,7 @@ export const ENDPOINTS = {
   DASHBOARD: {
     METRICS: '/dashboard',
   },
+  WORK: '/work',
   INVENTORY: {
     ITEMS: '/inventory/items',
     TRANSACTIONS: '/inventory/transactions',

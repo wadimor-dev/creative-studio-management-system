@@ -89,6 +89,9 @@ ROLE_PERMISSIONS = {
         Permission.INVENTORY_UPDATE,
         Permission.INVENTORY_DELETE,
 
+        Permission.INVENTORY_TRANSACTION_VIEW,
+        Permission.INVENTORY_TRANSACTION_CREATE,
+
         Permission.PRODUCT_VIEW,
 
         Permission.USER_VIEW,
