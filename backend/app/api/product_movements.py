@@ -10,9 +10,9 @@ from app.models.product import Product
 from app.schemas.product_movement import ProductMovementCreate, ProductMovementResponse, ProductStockResponse
 from app.common.responses import SuccessResponse, create_success_response
 from app.common.pagination import PaginatedResponse, create_paginated_response, PaginationParams
-from app.dependencies.permission import RequireRole
+from app.dependencies.permission import RequirePermission
+from app.constants.permissions import Permission
 from app.dependencies.auth import get_current_user
-from app.constants.role import RoleType
 from app.exceptions.base import CSMSException
 from app.models.user import User
 
@@ -37,7 +37,7 @@ def _update_stock(db: Session, product_id: int, location_id: int, quantity_chang
             raise CSMSException(f"Insufficient stock for product {product_id} at location {location_id}", status_code=400)
         stock.quantity = new_quantity
 
-@router.get("", response_model=PaginatedResponse[ProductMovementResponse])
+@router.get("", response_model=PaginatedResponse[ProductMovementResponse], dependencies=[Depends(RequirePermission(Permission.PRODUCT_MOVEMENT_VIEW))])
 def get_movements(
     db: Session = Depends(get_db),
     pagination: PaginationParams = Depends(),
@@ -102,7 +102,7 @@ def get_movements(
         message="Movements fetched successfully"
     )
 
-@router.post("", response_model=SuccessResponse[ProductMovementResponse], status_code=status.HTTP_201_CREATED, dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("", response_model=SuccessResponse[ProductMovementResponse], status_code=status.HTTP_201_CREATED, dependencies=[Depends(RequirePermission(Permission.PRODUCT_MOVEMENT_CREATE))])
 def create_movement(movement_in: ProductMovementCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     
     if movement_in.type != ProductMovementType.ADJUSTMENT and movement_in.quantity <= 0:
