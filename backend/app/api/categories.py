@@ -6,18 +6,18 @@ from app.database.session import get_db
 from app.models.category import Category
 from app.schemas.category import CategoryCreate, CategoryUpdate, CategoryResponse
 from app.common.responses import SuccessResponse, create_success_response
-from app.dependencies.permission import RequireRole
-from app.constants.role import RoleType
+from app.dependencies.permission import RequirePermission
+from app.constants.permissions import Permission
 from app.exceptions.base import CSMSException
 
 router = APIRouter()
 
-@router.get("", response_model=SuccessResponse[List[CategoryResponse]])
+@router.get("", response_model=SuccessResponse[List[CategoryResponse]], dependencies=[Depends(RequirePermission(Permission.CATEGORY_VIEW))])
 def get_categories(db: Session = Depends(get_db)):
     categories = db.query(Category).all()
     return create_success_response(data=categories, message="Categories fetched successfully")
 
-@router.post("", response_model=SuccessResponse[CategoryResponse], dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.post("", response_model=SuccessResponse[CategoryResponse], dependencies=[Depends(RequirePermission(Permission.CATEGORY_CREATE))])
 def create_category(category_in: CategoryCreate, db: Session = Depends(get_db)):
     existing = db.query(Category).filter(Category.name == category_in.name).first()
     if existing:
@@ -29,7 +29,7 @@ def create_category(category_in: CategoryCreate, db: Session = Depends(get_db)):
     db.refresh(category)
     return create_success_response(data=category, message="Category created successfully")
 
-@router.put("/{category_id}", response_model=SuccessResponse[CategoryResponse], dependencies=[Depends(RequireRole([RoleType.ADMIN, RoleType.STAFF]))])
+@router.put("/{category_id}", response_model=SuccessResponse[CategoryResponse], dependencies=[Depends(RequirePermission(Permission.CATEGORY_UPDATE))])
 def update_category(category_id: int, category_in: CategoryUpdate, db: Session = Depends(get_db)):
     category = db.query(Category).filter(Category.id == category_id).first()
     if not category:
@@ -48,7 +48,7 @@ def update_category(category_id: int, category_in: CategoryUpdate, db: Session =
     db.refresh(category)
     return create_success_response(data=category, message="Category updated successfully")
 
-@router.delete("/{category_id}", response_model=SuccessResponse[dict], dependencies=[Depends(RequireRole([RoleType.ADMIN]))])
+@router.delete("/{category_id}", response_model=SuccessResponse[dict], dependencies=[Depends(RequirePermission(Permission.CATEGORY_DELETE))])
 def delete_category(category_id: int, db: Session = Depends(get_db)):
     category = db.query(Category).filter(Category.id == category_id).first()
     if not category:

@@ -2,7 +2,7 @@ from enum import Enum
 
 class Permission(str, Enum):
 
-     DASHBOARD_VIEW = "dashboard.view"
+    DASHBOARD_VIEW = "dashboard.view"
 
     REPORT_VIEW = "report.view"
     REPORT_EXPORT = "report.export"
@@ -30,4 +30,9 @@ class Permission(str, Enum):
     PRODUCT_UPDATE = "product.update"
     PRODUCT_DELETE = "product.delete"
 
-    PRODUCT_EXPORT = "product.exportn
+    PRODUCT_EXPORT = "product.export"
+
+    CATEGORY_VIEW = "category.view"
+    CATEGORY_CREATE = "category.create"
+    CATEGORY_UPDATE = "category.update"
+    CATEGORY_DELETE = "category.delete"
