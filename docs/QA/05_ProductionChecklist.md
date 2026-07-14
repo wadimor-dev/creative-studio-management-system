@@ -1,0 +1,24 @@
+# Production Readiness Checklist (RC v1.0)
+
+- [x] Migration OK (Tidak ada tabel orphan, migration berjalan lancar).
+- [x] Seeder OK (Database memiliki data inisial yang valid).
+- [x] API OK (Endpoint merespon 200/201/400 secara tepat).
+- [x] Frontend Build OK (Nol error saat `npm run build`).
+- [x] Upload OK (Validasi foto berhasil).
+- [x] Export OK (Excel dan PDF memiliki header, filter, dan data konsisten).
+- [x] Dashboard OK (Data selaras dengan Reports).
+- [x] Reports OK (Auto Report Engine berjalan real-time).
+- [x] Inventory OK (Stok bertambah/berkurang akurat).
+- [x] Work Activity OK (Alur START hingga FINISH mulus).
+- [x] Permission OK (RBAC untuk Staff/Manager/Admin tervalidasi).
+- [x] JWT OK (Token kedaluwarsa tertangani).
+- [x] Logging OK (Audit trail terekam di DB).
+- [x] Error Handler OK (Tidak ada internal server error terkespos).
+- [x] Backup Tested.
+- [x] Restore Tested.
+- [x] Test Passed (Semua test runner berwarna hijau).
+- [x] UAT Passed.
+- [x] Zero Critical Bug.
+- [x] Zero High Bug.
+- [x] Documentation Complete.
+- [x] Version Tagged v1.0.0.
