@@ -19,7 +19,7 @@ const LocationForm = ({ initialData, onSubmit, onCancel }) => {
         <Input 
           {...register('name', { required: 'Location name is required' })} 
           error={!!errors.name} 
-          placeholder="e.g. Camera"
+          placeholder="e.g. Studio A, Warehouse 1"
         />
         {errors.name && <p className="mt-1 text-xs text-rose-500">{errors.name.message}</p>}
       </div>

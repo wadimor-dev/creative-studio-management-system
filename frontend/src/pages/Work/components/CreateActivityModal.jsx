@@ -80,6 +80,43 @@ const CreateActivityModal = ({ isOpen, onClose, onSubmit }) => {
                   <option value="2">Graphic Design</option>
                   <option value="3">Photography</option>
                   <option value="4">Videography</option>
+
+                  <option value="5">Briefing & Coordination</option>
+                  <option value="6">Project Management</option>
+                  <option value="7">Campaign & Branding</option>
+                  <option value="8">Content Planning</option>
+                  <option value="9">Photography</option>
+                  <option value="10">Videography / Shooting</option>
+                  <option value="11">Photo Editing</option>
+                  <option value="12">Motion Graphics</option>
+                  <option value="13">Website Management</option>
+                  <option value="14">Web Development</option>
+                  <option value="15">Digital Marketing</option>
+                  <option value="16">Social Media Content</option>
+                  <option value="17">Marketplace Management</option>
+                  <option value="18">Asset Management</option>
+                  <option value="19">Data Backup</option>
+                  <option value="20">Inventory Management</option>
+                  <option value="21">Equipment Management</option>
+                  <option value="22">Property Management</option>
+                  <option value="23">Studio Management</option>
+                  <option value="24">Showroom Management</option>
+                  <option value="25">Display & Visual Merchandising</option>
+                  <option value="26">Styling</option>
+                  <option value="27">Talent Management</option>
+                  <option value="28">Production Support</option>
+                  <option value="29">Logistics</option>
+                  <option value="30">Media Relations</option>
+                  <option value="31">External Communication</option>
+                  <option value="32">Quality Control</option>
+                  <option value="33">Documentation</option>
+                  <option value="34">Reporting</option>
+                  <option value="35">KPI & Performance Review</option>
+                  <option value="36">Budget Management</option>
+                  <option value="37">Research & Development</option>
+                  <option value="38">SOP & Workflow</option>
+                  <option value="39">Brand Guideline</option>
+                  <option value="40">Customer Experience</option>
                 </>
               )}
             </select>

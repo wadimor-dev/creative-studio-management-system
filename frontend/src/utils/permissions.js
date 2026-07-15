@@ -9,7 +9,7 @@ export const PERMISSIONS = {
 
   PRODUCTS: ['ADMIN', 'STAFF'],
 
-  REPORTS: ['ADMIN'],
+  REPORTS: ['ADMIN', 'CREATIVE'],
 
   USERS: ['ADMIN'],
 };

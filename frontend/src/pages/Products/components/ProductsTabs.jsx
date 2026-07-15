@@ -10,6 +10,8 @@ const ProductsTabs = () => {
     { name: 'Stock Overview', href: '/products/stock', icon: LayoutDashboard },
     { name: 'Catalog', href: '/products/catalog', icon: Package },
     { name: 'Movements', href: '/products/movements', icon: ArrowRightLeft },
+    { name: 'Placements', href: '/products/placements', icon: Database },
+    { name: 'Barcode Center', href: '/products/barcode-center', icon: Database },
     { name: 'Master Data', href: '/products/master-data', icon: Database },
   ];
 

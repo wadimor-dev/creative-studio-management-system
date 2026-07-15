@@ -20,9 +20,11 @@ const Locations = () => {
 
   const handleLocationSubmit = async (data) => {
     try {
+      const payload = { ...data };
+
       const res = modalState.data
-        ? await locationService.update(modalState.data.id, data)
-        : await locationService.create(data);
+        ? await locationService.update(modalState.data.id, payload)
+        : await locationService.create(payload);
 
       if (res.success) {
         toastSuccess(`Location ${modalState.data ? 'updated' : 'created'} successfully!`);
@@ -55,7 +57,7 @@ const Locations = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full min-h-[400px]">
-        <LoadingSpinner size="lg" text="Loading categories..." />
+        <LoadingSpinner size="lg" text="Loading locations..." />
       </div>
     );
   }
@@ -82,7 +84,6 @@ const Locations = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
-                <th className="p-4 font-medium border-b border-slate-200">ID</th>
                 <th className="p-4 font-medium border-b border-slate-200">Name</th>
                 <th className="p-4 font-medium border-b border-slate-200">Description</th>
                 <th className="p-4 font-medium border-b border-slate-200 text-right">Actions</th>
@@ -91,7 +92,6 @@ const Locations = () => {
             <tbody className="text-sm divide-y divide-slate-100">
               {locations.map((cat) => (
                 <tr key={cat.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="p-4 text-slate-500">#{cat.id}</td>
                   <td className="p-4 font-medium text-slate-900">{cat.name}</td>
                   <td className="p-4 text-slate-500">{cat.description || '-'}</td>
                   <td className="p-4 text-right">
@@ -114,7 +114,7 @@ const Locations = () => {
               ))}
               {locations.length === 0 && (
                 <tr>
-                  <td colSpan="4" className="p-8 text-center text-slate-500">
+                  <td colSpan="3" className="p-8 text-center text-slate-500">
                     No locations found.
                   </td>
                 </tr>

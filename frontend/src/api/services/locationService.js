@@ -6,6 +6,10 @@ export const locationService = {
     return apiClient.get(ENDPOINTS.LOCATIONS);
   },
   
+  getById: (id) => {
+    return apiClient.get(`${ENDPOINTS.LOCATIONS}/${id}`);
+  },
+  
   create: (data) => {
     return apiClient.post(ENDPOINTS.LOCATIONS, data);
   },

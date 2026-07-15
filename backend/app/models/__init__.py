@@ -8,7 +8,8 @@ from app.models.inventory_transaction import InventoryTransaction
 from app.models.product_master import ProductType, ProductCategory, ProductMotif, ProductSubMotif, ProductColor
 from app.models.product import Product
 from app.models.product_movement import ProductMovement
-from app.models.product_stock import ProductStock
+from app.models.product_stock import ProductPlacementStock
+from app.models.product_placement import PlacementType, ProductPlacement
 
 # This ensures all models are imported when `app.models` is imported.
 from app.models.item_stock import ItemStock
@@ -20,3 +21,5 @@ from app.models.work_evidence import WorkEvidence
 from app.models.work_asset import WorkAsset
 
 from .export_log import ExportLog
+from .activity_log import ActivityLog
+from .audit_log import AuditLog

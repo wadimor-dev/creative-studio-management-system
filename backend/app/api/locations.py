@@ -19,8 +19,8 @@ def get_locations(db: Session = Depends(get_db)):
 
 @router.post("", response_model=SuccessResponse[LocationResponse], dependencies=[Depends(RequirePermission(Permission.LOCATION_CREATE))])
 def create_location(location_in: LocationCreate, db: Session = Depends(get_db)):
-    existing = db.query(Location).filter(Location.name == location_in.name).first()
-    if existing:
+    existing_name = db.query(Location).filter(Location.name == location_in.name).first()
+    if existing_name:
         raise CSMSException(f"Location with name '{location_in.name}' already exists", status_code=400)
     
     location = Location(**location_in.model_dump())
@@ -36,8 +36,8 @@ def update_location(location_id: int, location_in: LocationUpdate, db: Session =
         raise CSMSException("Location not found", status_code=404)
         
     if location_in.name:
-        existing = db.query(Location).filter(Location.name == location_in.name, Location.id != location_id).first()
-        if existing:
+        existing_name = db.query(Location).filter(Location.name == location_in.name, Location.id != location_id).first()
+        if existing_name:
             raise CSMSException(f"Location with name '{location_in.name}' already exists", status_code=400)
             
     update_data = location_in.model_dump(exclude_unset=True)
@@ -54,6 +54,8 @@ def delete_location(location_id: int, db: Session = Depends(get_db)):
     if not location:
         raise CSMSException("Location not found", status_code=404)
         
+    # Later check if it has WorkAsset items before deleting
+    
     db.delete(location)
     db.commit()
     return create_success_response(data=None, message="Location deleted successfully")

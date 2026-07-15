@@ -8,22 +8,38 @@ class ProductMovementType(str, enum.Enum):
     IN = "IN"
     OUT = "OUT"
     TRANSFER = "TRANSFER"
-    ADJUSTMENT = "ADJUSTMENT"
+
+class ProductMovementReason(str, enum.Enum):
+    RECEIVE_FROM_FACTORY = "RECEIVE_FROM_FACTORY"
+    SHOWROOM_TRANSFER = "SHOWROOM_TRANSFER"
+    GIFT = "GIFT"
+    SALES_SAMPLE = "SALES_SAMPLE"
+    PHOTO_SHOOT = "PHOTO_SHOOT"
+    TV_STUDIO = "TV_STUDIO"
+    DAMAGED = "DAMAGED"
+    MISSING = "MISSING"
+    STOCK_OPNAME = "STOCK_OPNAME"
+    OTHER = "OTHER"
 
 class ProductMovement(Base):
     __tablename__ = "product_movements"
 
     id = Column(Integer, primary_key=True, index=True)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    
     type = Column(Enum(ProductMovementType), nullable=False)
+    reason = Column(Enum(ProductMovementReason), nullable=False, default=ProductMovementReason.OTHER)
+    
     quantity = Column(Integer, nullable=False)
     
-    # Location tracking
-    source_location_id = Column(Integer, ForeignKey("locations.id"), nullable=True)
-    destination_location_id = Column(Integer, ForeignKey("locations.id"), nullable=True)
+    # Placement tracking
+    source_placement_id = Column(Integer, ForeignKey("product_placements.id"), nullable=True)
+    destination_placement_id = Column(Integer, ForeignKey("product_placements.id"), nullable=True)
     
     # Context
-    reference = Column(String(255), nullable=True)
+    reference = Column(String(255), nullable=True) # E.g., 'Work Activity', 'Sales Form'
+    reference_type = Column(String(50), nullable=True)
+    reference_id = Column(Integer, nullable=True)
     date = Column(DateTime, default=lambda: datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None), nullable=False)
     notes = Column(String(500), nullable=True)
 
@@ -32,6 +48,6 @@ class ProductMovement(Base):
 
     # Relationships
     product = relationship("Product")
-    source_location = relationship("Location", foreign_keys=[source_location_id])
-    destination_location = relationship("Location", foreign_keys=[destination_location_id])
+    source_placement = relationship("ProductPlacement", foreign_keys=[source_placement_id])
+    destination_placement = relationship("ProductPlacement", foreign_keys=[destination_placement_id])
     user = relationship("User")

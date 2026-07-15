@@ -12,6 +12,11 @@ export const ENDPOINTS = {
     ITEMS: '/inventory/items',
     TRANSACTIONS: '/inventory/transactions',
   },
+  SCANNER: {
+    LOCATION: '/inventory/scanner/location',
+    IN: '/inventory/scanner/in',
+    OUT: '/inventory/scanner/out',
+  },
   CATEGORIES: '/categories',
   LOCATIONS: '/locations',
   PRODUCT_MASTER: '/product-master',

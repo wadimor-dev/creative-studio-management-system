@@ -27,7 +27,7 @@ const StockOverview = () => {
 
   const locationStats = locationArray.map(loc => {
     const totalQty = stocks
-      .filter(s => s.location?.id === loc.id)
+      .filter(s => s.placement?.id === loc.id)
       .reduce((sum, current) => sum + current.quantity, 0);
     return { ...loc, totalQty };
   }).filter(loc => loc.totalQty > 0);
@@ -35,7 +35,7 @@ const StockOverview = () => {
   const filteredStocks = stocks.filter(s => 
     s.product?.display_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     s.product?.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.location?.name.toLowerCase().includes(searchTerm.toLowerCase())
+    s.placement?.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleOpnameSubmit = async (data) => {
@@ -123,7 +123,7 @@ const StockOverview = () => {
                       <div className="text-xs font-mono text-slate-500 mt-0.5">{item.product?.sku}</div>
                     </td>
                     <td className="p-4 text-slate-700 font-medium">
-                      {item.location?.name}
+                      {item.placement?.name}
                     </td>
                     <td className="p-4 text-right">
                       <Badge variant={item.quantity > 0 ? 'success' : 'danger'} className="text-sm font-semibold">

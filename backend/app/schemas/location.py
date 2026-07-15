@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from typing import Optional, List
 
 class LocationBase(BaseModel):
     name: str
@@ -8,8 +8,9 @@ class LocationBase(BaseModel):
 class LocationCreate(LocationBase):
     pass
 
-class LocationUpdate(LocationBase):
+class LocationUpdate(BaseModel):
     name: Optional[str] = None
+    description: Optional[str] = None
 
 class LocationResponse(LocationBase):
     id: int

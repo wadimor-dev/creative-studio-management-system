@@ -97,6 +97,22 @@ ROLE_PERMISSIONS = {
         Permission.USER_VIEW,
 
         Permission.REPORT_VIEW,
+
+        Permission.WORK_VIEW,
+        Permission.WORK_CREATE,
+        Permission.WORK_START,
+        Permission.WORK_PAUSE,
+        Permission.WORK_RESUME,
+        Permission.WORK_CANCEL,
+        Permission.WORK_FINISH,
+
+        Permission.WORK_EVIDENCE_UPLOAD,
+        Permission.WORK_EVIDENCE_VIEW,
+
+        Permission.CATEGORY_VIEW,
+        Permission.CATEGORY_CREATE,
+        Permission.CATEGORY_UPDATE,
+        Permission.CATEGORY_DELETE,
     },
 
 }

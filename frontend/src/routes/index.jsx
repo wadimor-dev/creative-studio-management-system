@@ -18,11 +18,19 @@ import ProductMasterData from '../pages/Products/MasterData';
 import ProductCatalog from '../pages/Products/Catalog';
 import ProductMovements from '../pages/Products/Movements';
 import ProductStockOverview from '../pages/Products/StockOverview';
+import Placements from '../pages/Products/Placements';
+import BarcodeCenter from '../pages/Products/BarcodeCenter';
+
+import ScannerLayout from '../layouts/ScannerLayout';
+import ScannerApp from '../pages/Scanner/ScannerApp';
 
 import Reports from '../pages/Reports';
 import Users from '../pages/Users';
 import Profile from '../pages/Profile';
 import WorkWorkspace from '../pages/Work';
+import ActivityLog from '../pages/Logs/ActivityLog';
+import AuditLog from '../pages/Logs/AuditLog';
+import BackupManager from '../pages/System/BackupManager';
 import { useAuth } from '../contexts/AuthContext';
 
 
@@ -30,14 +38,12 @@ import { useAuth } from '../contexts/AuthContext';
 const HomeRedirect = () => {
   const { user } = useAuth();
   if (user?.role?.name === 'ADMIN') {
-    return <Navigate to="/work" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
-  return <Navigate to="/dashboard" replace />;
+  return <Navigate to="/work" replace />;
 };
 
 const AppRoutes = () => {
-  const { user } = useAuth();
-  
   return (
     <Routes>
       {/* Public Routes */}
@@ -48,41 +54,67 @@ const AppRoutes = () => {
       {/* Protected Routes (Main App Shell) */}
       <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>
+
           <Route path="/" element={<HomeRedirect />} />
+
           <Route element={<ProtectedRoute permission="DASHBOARD" />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
 
-        <Route element={<ProtectedRoute permission="WORK" />}>
-          <Route path="/work" element={<WorkWorkspace />} />
-        </Route>
+          <Route element={<ProtectedRoute permission="WORK" />}>
+            <Route path="/work" element={<WorkWorkspace />} />
+          </Route>
           
           {/* Inventory Routes */}
-        <Route element={<ProtectedRoute permission="INVENTORY" />}>ll.
-          <Route path="inventory">
-            <Route index element={<InventoryDashboard />} />
-            <Route path="items" element={<ItemsList />} />
-            <Route path="history" element={<InventoryHistory />} />
-            <Route path="categories" element={<Categories />} />
-            <Route path="locations" element={<Locations />} />
+          <Route element={<ProtectedRoute permission="INVENTORY" />}>
+            <Route path="inventory">
+              <Route index element={<InventoryDashboard />} />
+              <Route path="items" element={<ItemsList />} />
+              <Route path="history" element={<InventoryHistory />} />
+              <Route path="categories" element={<Categories />} />
+              <Route path="locations" element={<Locations />} />
+            </Route>
           </Route>
-        </Route>
+
+          {/* Scanner Routes for V1 (Deleted/Moved to V2 Scanner Layout) */}
 
           {/* Products Routes */}
-        <Route path="products">
-          <Route index element={<ProductsDashboard />} />
-          <Route path="stock" element={<ProductStockOverview />} />
-          <Route path="catalog" element={<ProductCatalog />} />
-          <Route path="movements" element={<ProductMovements />} />
-          <Route path="master-data" element={<ProductMasterData />} />
-        </Route>
+          <Route element={<ProtectedRoute permission="PRODUCTS" />}>
+            <Route path="products">
+              <Route index element={<ProductsDashboard />} />
+              <Route path="stock" element={<ProductStockOverview />} />
+              <Route path="catalog" element={<ProductCatalog />} />
+              <Route path="movements" element={<ProductMovements />} />
+              <Route path="master-data" element={<ProductMasterData />} />
+              <Route path="placements" element={<Placements />} />
+              <Route path="barcode-center" element={<BarcodeCenter />} />
+            </Route>
+          </Route>
 
-        <Route path="/reports" element={<Reports />} />
+
+
+          <Route element={<ProtectedRoute permission="USERS" />}>
+            <Route path="/reports" element={<Reports />} />
+          </Route>
+
           <Route element={<ProtectedRoute permission="USERS" />}>
             <Route path="/users" element={<Users />} />
           </Route>
+
+          <Route element={<ProtectedRoute permission="USERS" />}>
+            <Route path="/logs/activity" element={<ActivityLog />} />
+            <Route path="/logs/audit" element={<AuditLog />} />
+            <Route path="/system/backups" element={<BackupManager />} />
+          </Route>
+          
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Navigate to="/profile" replace />} />
+        </Route>
+
+        <Route element={<ScannerLayout />}>
+          <Route element={<ProtectedRoute permission="PRODUCTS" />}>
+            <Route path="/scanner" element={<ScannerApp />} />
+          </Route>
         </Route>
       </Route>
       

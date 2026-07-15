@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
 from app.database.session import get_db
 from app.services.auth_service import auth_service
+from app.services.logger_service import logger_service
 from app.common.responses import SuccessResponse, create_success_response
 from app.schemas.auth import Token, TokenPayload
 from app.schemas.user import UserResponse
@@ -16,10 +17,24 @@ router = APIRouter()
 
 @router.post("/login", response_model=SuccessResponse[Token])
 def login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
     token_data = auth_service.authenticate_user(db, form_data)
+    
+    # We need user_id to log it. Let's fetch the user by username to get the ID.
+    user = user_repo.get_by_username(db, form_data.username)
+    if user:
+        logger_service.log_activity(
+            db=db,
+            user_id=user.id,
+            action_type="LOGIN",
+            description=f"User logged in",
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent")
+        )
+        
     return create_success_response(data=token_data, message="Login successful")
 
 class RefreshRequest(BaseModel):

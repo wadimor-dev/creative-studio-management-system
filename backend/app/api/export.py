@@ -232,6 +232,14 @@ def export_reports_excel(
     db.add(log)
     db.commit()
     
+    from app.services.logger_service import logger_service
+    logger_service.log_activity(
+        db=db,
+        user_id=current_user.id,
+        action_type="EXPORT_REPORT",
+        description=f"Exported {type} report to EXCEL"
+    )
+    
     today_str = datetime.date.today().strftime("%Y%m%d")
     filename = f"activity_report_{type}_{today_str}.xlsx"
     headers_res = {
@@ -276,6 +284,15 @@ def export_reports_pdf(
     log = ExportLog(user_id=current_user.id, type=type, format="PDF")
     db.add(log)
     db.commit()
+    
+    from app.services.logger_service import logger_service
+    logger_service.log_activity(
+        db=db,
+        user_id=current_user.id,
+        action_type="EXPORT_REPORT",
+        description=f"Exported {type} report to PDF"
+    )
+
     
     today_str = datetime.date.today().strftime("%Y%m%d")
     filename = f"activity_report_{type}_{today_str}.pdf"

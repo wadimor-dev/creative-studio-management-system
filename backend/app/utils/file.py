@@ -9,7 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 UPLOAD_DIR = os.path.join(BASE_DIR, "storage", "uploads")
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/webp"}
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
+MAX_FILE_SIZE = 20 * 1024 * 1024  # 20 MB
 
 def get_file_extension(filename: str) -> str:
     return os.path.splitext(filename)[1].lower()
@@ -28,7 +28,7 @@ def validate_evidence_file(file: UploadFile):
     file.file.seek(0)
     
     if file_size > MAX_FILE_SIZE:
-        raise CSMSException(f"File size exceeds 5MB limit ({file_size} bytes)", status_code=400)
+        raise CSMSException(f"File size exceeds 20MB limit ({file_size} bytes)", status_code=400)
         
     return file_size
 

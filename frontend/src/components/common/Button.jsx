@@ -15,6 +15,7 @@ const Button = forwardRef(({
   const variants = {
     primary: 'bg-brand-600 text-white shadow-sm hover:bg-brand-500 focus:ring-brand-500 border border-transparent',
     secondary: 'bg-white text-slate-700 shadow-sm border border-slate-300 hover:bg-slate-50 focus:ring-brand-500',
+    outline: 'bg-transparent text-brand-600 border border-brand-200 hover:bg-brand-50 focus:ring-brand-500',
     danger: 'bg-rose-600 text-white shadow-sm hover:bg-rose-500 focus:ring-rose-500 border border-transparent',
     ghost: 'bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-slate-500 border border-transparent',
     delete:'p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors',

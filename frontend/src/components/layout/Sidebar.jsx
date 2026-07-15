@@ -8,7 +8,11 @@ import {
   Users,
   Settings,
   X,
-  Briefcase
+  Briefcase,
+  ScanBarcode,
+  Activity,
+  ClipboardList,
+  DatabaseBackup
 } from 'lucide-react';
 
 import { useAuth } from '../../contexts/AuthContext';
@@ -58,9 +62,37 @@ const Sidebar = ({ isOpen = false, onClose }) => {
     },
 
     {
+      name: 'Operations / Scanner',
+      path: '/scanner',
+      icon: <ScanBarcode size={20} />,
+      permission: 'PRODUCTS' // Or a specific operation permission if available
+    },
+
+    {
       name: 'Users',
       path: '/users',
       icon: <Users size={20} />,
+      permission: 'USERS'
+    },
+    
+    {
+      name: 'Activity Log',
+      path: '/logs/activity',
+      icon: <Activity size={20} />,
+      permission: 'USERS' // Only admins can see users, so only admins can see logs
+    },
+
+    {
+      name: 'Audit Log',
+      path: '/logs/audit',
+      icon: <ClipboardList size={20} />,
+      permission: 'USERS'
+    },
+
+    {
+      name: 'System Backups',
+      path: '/system/backups',
+      icon: <DatabaseBackup size={20} />,
       permission: 'USERS'
     },
 

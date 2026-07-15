@@ -62,6 +62,20 @@ app.include_router(product_stocks_router, prefix=f"{settings.API_V1_STR}/product
 app.include_router(locations_router, prefix=f"{settings.API_V1_STR}/locations", tags=["locations"])
 app.include_router(work_activities_router, prefix=f"{settings.API_V1_STR}/work-activities", tags=["work-activities"])
 
+from app.api.product_placements import router as product_placements_router
+from app.api.product_scanner import router as product_scanner_router
+from app.api.product_opname import router as product_opname_router
+
+app.include_router(product_placements_router, prefix=f"{settings.API_V1_STR}/product-placements", tags=["product-placements"])
+app.include_router(product_scanner_router, prefix=f"{settings.API_V1_STR}/product-scanner", tags=["product-scanner"])
+app.include_router(product_opname_router, prefix=f"{settings.API_V1_STR}/product-opname", tags=["product-opname"])
+
+from app.api.logs import router as logs_router
+app.include_router(logs_router, prefix=f"{settings.API_V1_STR}/logs", tags=["logs"])
+
+from app.api.system import router as system_router
+app.include_router(system_router, prefix=f"{settings.API_V1_STR}/system", tags=["system"])
+
 @app.get("/")
 async def root():
     return {"message": f"Welcome to {settings.APP_NAME}"}
