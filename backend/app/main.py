@@ -76,6 +76,9 @@ app.include_router(logs_router, prefix=f"{settings.API_V1_STR}/logs", tags=["log
 from app.api.system import router as system_router
 app.include_router(system_router, prefix=f"{settings.API_V1_STR}/system", tags=["system"])
 
+from app.api.showroom import router as showroom_router
+app.include_router(showroom_router, prefix=f"{settings.API_V1_STR}/showroom", tags=["showroom"])
+
 @app.get("/")
 async def root():
     return {"message": f"Welcome to {settings.APP_NAME}"}

@@ -29,6 +29,16 @@ export const ENDPOINTS = {
     PROFILE: '/users/profile'
   },
   EXPORT: '/export',
+  SHOWROOM: {
+    BASE: '/showroom',
+    DASHBOARD: '/showroom/dashboard',
+    STOCK: '/showroom/stock',
+    TRANSFERS: '/showroom/transfers',
+    STOCK_IN: '/showroom/stock-in',
+    STOCK_OUT: '/showroom/stock-out',
+    MOVEMENTS: '/showroom/movements',
+    LOCATIONS: '/showroom/locations',
+  },
 };
 
 export default ENDPOINTS;

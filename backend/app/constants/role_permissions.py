@@ -67,6 +67,10 @@ ROLE_PERMISSIONS = {
 
         Permission.WORK_EVIDENCE_UPLOAD,
         Permission.WORK_EVIDENCE_VIEW,
+
+        Permission.SHOWROOM_VIEW,
+        Permission.SHOWROOM_CREATE,
+        Permission.SHOWROOM_UPDATE,
     },
 
     RoleType.STAFF: {

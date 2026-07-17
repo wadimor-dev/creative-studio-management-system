@@ -12,6 +12,8 @@ export const PERMISSIONS = {
   REPORTS: ['ADMIN', 'CREATIVE'],
 
   USERS: ['ADMIN'],
+
+  SHOWROOM: ['ADMIN'],
 };
 
 export const hasPermission = (user, permission) => {

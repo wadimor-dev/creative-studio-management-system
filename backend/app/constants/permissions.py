@@ -64,3 +64,7 @@ class Permission(str, Enum):
 
     WORK_EVIDENCE_UPLOAD = "work.evidence.upload"
     WORK_EVIDENCE_VIEW = "work.evidence.view"
+
+    SHOWROOM_VIEW = "showroom.view"
+    SHOWROOM_CREATE = "showroom.create"
+    SHOWROOM_UPDATE = "showroom.update"
