@@ -17,6 +17,8 @@ import ProductsDashboard from '../pages/Products';
 import ProductMasterData from '../pages/Products/MasterData';
 import ProductCatalog from '../pages/Products/Catalog';
 import ProductMovements from '../pages/Products/Movements';
+import MovementCreate from '../pages/Products/MovementCreate';
+
 import ProductStockOverview from '../pages/Products/StockOverview';
 import Placements from '../pages/Products/Placements';
 import BarcodeCenter from '../pages/Products/BarcodeCenter';
@@ -85,6 +87,7 @@ const AppRoutes = () => {
               <Route path="stock" element={<ProductStockOverview />} />
               <Route path="catalog" element={<ProductCatalog />} />
               <Route path="movements" element={<ProductMovements />} />
+              <Route path="movements/create" element={<MovementCreate />} />
               <Route path="master-data" element={<ProductMasterData />} />
               <Route path="placements" element={<Placements />} />
               <Route path="barcode-center" element={<BarcodeCenter />} />
@@ -114,6 +117,7 @@ const AppRoutes = () => {
         <Route element={<ScannerLayout />}>
           <Route element={<ProtectedRoute permission="PRODUCTS" />}>
             <Route path="/scanner" element={<ScannerApp />} />
+            
           </Route>
         </Route>
       </Route>

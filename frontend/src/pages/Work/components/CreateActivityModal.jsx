@@ -80,13 +80,12 @@ const CreateActivityModal = ({ isOpen, onClose, onSubmit }) => {
                   <option value="2">Graphic Design</option>
                   <option value="3">Photography</option>
                   <option value="4">Videography</option>
-
                   <option value="5">Briefing & Coordination</option>
                   <option value="6">Project Management</option>
                   <option value="7">Campaign & Branding</option>
                   <option value="8">Content Planning</option>
-                  <option value="9">Photography</option>
-                  <option value="10">Videography / Shooting</option>
+                  <option value="9">Copywriting</option>
+                  <option value="10">Translation</option>
                   <option value="11">Photo Editing</option>
                   <option value="12">Motion Graphics</option>
                   <option value="13">Website Management</option>

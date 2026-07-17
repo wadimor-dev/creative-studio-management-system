@@ -19,9 +19,9 @@ def _generate_product_identity(db: Session, product_in, product_id: int = 0):
     p_type = db.query(ProductType).filter(ProductType.id == product_in.type_id).first()
     category = db.query(ProductCategory).filter(ProductCategory.id == product_in.category_id).first()
     motif = db.query(ProductMotif).filter(ProductMotif.id == product_in.motif_id).first()
-    color = db.query(ProductColor).filter(ProductColor.id == product_in.color_id).first()
+    # color = db.query(ProductColor).filter(ProductColor.id == product_in.color_id).first()
     
-    if not all([p_type, category, motif, color]):
+    if not all([p_type, category, motif]):
         raise CSMSException("Invalid master data ID provided", status_code=400)
         
     sub_motif = None
@@ -34,7 +34,7 @@ def _generate_product_identity(db: Session, product_in, product_id: int = 0):
     name_parts = [p_type.name, category.name, motif.name]
     if sub_motif:
         name_parts.append(sub_motif.name)
-    name_parts.append(color.name)
+    # name_parts.append(color.name)
     if product_in.variant:
         name_parts.append(product_in.variant)
         
@@ -44,7 +44,7 @@ def _generate_product_identity(db: Session, product_in, product_id: int = 0):
     sku_parts = [p_type.code, category.code, motif.code]
     if sub_motif:
         sku_parts.append(sub_motif.code)
-    sku_parts.append(color.code)
+    # sku_parts.append(color.code)
     if product_in.variant:
         # Use first 3 letters of variant as code, upper cased
         sku_parts.append(product_in.variant[:3].upper())
@@ -61,7 +61,7 @@ def get_products(
     category_id: int = None,
     motif_id: int = None,
     sub_motif_id: int = None,
-    color_id: int = None,
+    # color_id: int = None,
     db: Session = Depends(get_db),
     pagination: PaginationParams = Depends()
 ):
@@ -70,7 +70,7 @@ def get_products(
         joinedload(Product.category),
         joinedload(Product.motif),
         joinedload(Product.sub_motif),
-        joinedload(Product.color)
+        # joinedload(Product.color)
     )
     
     if type_id:
@@ -81,8 +81,8 @@ def get_products(
         query = query.filter(Product.motif_id == motif_id)
     if sub_motif_id:
         query = query.filter(Product.sub_motif_id == sub_motif_id)
-    if color_id:
-        query = query.filter(Product.color_id == color_id)
+    # if color_id:
+    #     query = query.filter(Product.color_id == color_id)
         
     total = query.count()
     items = query.offset(pagination.skip).limit(pagination.size).all()
@@ -124,7 +124,7 @@ def update_product(product_id: int, product_in: ProductUpdate, db: Session = Dep
         setattr(product, key, value)
         
     # If any master data relation or variant changed, we need to regenerate the name and SKU
-    if any(k in update_data for k in ['type_id', 'category_id', 'motif_id', 'sub_motif_id', 'color_id', 'variant']):
+    if any(k in update_data for k in ['type_id', 'category_id', 'motif_id', 'sub_motif_id', 'variant']):
         # Create a mock object that combines existing data with new updates to pass to the generator
         class MockProduct:
             pass
@@ -133,7 +133,7 @@ def update_product(product_id: int, product_in: ProductUpdate, db: Session = Dep
         mock_p.category_id = product.category_id
         mock_p.motif_id = product.motif_id
         mock_p.sub_motif_id = product.sub_motif_id
-        mock_p.color_id = product.color_id
+        # mock_p.color_id = product.color_id
         mock_p.variant = product.variant
         
         final_sku, display_name = _generate_product_identity(db, mock_p, product.id)

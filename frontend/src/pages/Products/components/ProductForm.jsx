@@ -10,7 +10,7 @@ const ProductForm = ({ initialData, onSubmit, onCancel }) => {
   const { data: categories, loading: loadingCategories } = useProductMaster('categories');
   const { data: motifs, loading: loadingMotifs } = useProductMaster('motifs');
   const { data: subMotifs, loading: loadingSubMotifs } = useProductMaster('sub-motifs');
-  const { data: colors, loading: loadingColors } = useProductMaster('colors');
+  // const { data: colors, loading: loadingColors } = useProductMaster('colors');
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: initialData || {
@@ -18,7 +18,7 @@ const ProductForm = ({ initialData, onSubmit, onCancel }) => {
       category_id: '',
       motif_id: '',
       sub_motif_id: '',
-      color_id: '',
+      // color_id: '',
       variant: '',
       image_url: ''
     }
@@ -30,13 +30,13 @@ const ProductForm = ({ initialData, onSubmit, onCancel }) => {
       category_id: '',
       motif_id: '',
       sub_motif_id: '',
-      color_id: '',
+      // color_id: '',
       variant: '',
       image_url: ''
     });
   }, [initialData, reset]);
 
-  const isLoading = loadingTypes || loadingCategories || loadingMotifs || loadingSubMotifs || loadingColors;
+  const isLoading = loadingTypes || loadingCategories || loadingMotifs || loadingSubMotifs;
 
   if (isLoading) {
     return (
@@ -52,7 +52,7 @@ const ProductForm = ({ initialData, onSubmit, onCancel }) => {
       type_id: parseInt(data.type_id),
       category_id: parseInt(data.category_id),
       motif_id: parseInt(data.motif_id),
-      color_id: parseInt(data.color_id),
+      // color_id: parseInt(data.color_id),
       sub_motif_id: data.sub_motif_id ? parseInt(data.sub_motif_id) : null,
       variant: data.variant || null,
       image_url: data.image_url || null,
@@ -110,7 +110,7 @@ const ProductForm = ({ initialData, onSubmit, onCancel }) => {
           </select>
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Color *</label>
           <select 
             className={`w-full rounded-lg border ${errors.color_id ? 'border-rose-500' : 'border-slate-300'} px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500`}
@@ -120,7 +120,7 @@ const ProductForm = ({ initialData, onSubmit, onCancel }) => {
             {colors.map(t => <option key={t.id} value={t.id}>{t.name} ({t.code})</option>)}
           </select>
           {errors.color_id && <p className="mt-1 text-xs text-rose-500">{errors.color_id.message}</p>}
-        </div>
+        </div> */}
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Variant (Size/Package)</label>

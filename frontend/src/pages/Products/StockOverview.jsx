@@ -7,7 +7,6 @@ import Modal from '../../components/common/Modal';
 import { Search, PackageOpen, MapPin, ClipboardCheck } from 'lucide-react';
 import { toastSuccess, toastError } from '../../utils/toast';
 
-import ProductsTabs from './components/ProductsTabs';
 import StockOpnameModal from './components/StockOpnameModal';
 import GlobalFilter from '../../components/common/GlobalFilter';
 import { useProductStocks } from '../../hooks/useProductStocks';
@@ -32,8 +31,8 @@ const StockOverview = () => {
     return { ...loc, totalQty };
   }).filter(loc => loc.totalQty > 0);
 
-  const filteredStocks = stocks.filter(s => 
-    s.product?.display_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredStocks = stocks.filter(s =>
+    s.product?.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     s.product?.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
     s.placement?.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -52,92 +51,106 @@ const StockOverview = () => {
   };
 
   return (
-    <div>
-      <PageHeader 
-        title="Products" 
-        description="Manage your product catalog, movements, and master data."
+    <div className="space-y-6">
+      <PageHeader
+        title="Stock Overview"
+        description="Monitor current stock balances across all storage locations."
+        actions={
+          <Button
+            variant="primary"
+            size="sm"
+            className="gap-2 whitespace-nowrap"
+            onClick={() => setOpnameModalOpen(true)}
+          >
+            <ClipboardCheck size={16} />
+            Perform Stock Opname
+          </Button>
+        }
       />
-      
-      <ProductsTabs />
 
-      <GlobalFilter 
-        availableFilters={['type', 'category', 'motif', 'sub_motif', 'color', 'location']} 
-        onApply={setFilters} 
+      <GlobalFilter
+        availableFilters={['type', 'category', 'motif', 'sub_motif', 'color', 'location']}
+        onApply={setFilters}
       />
 
       {locationStats.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {locationStats.map(loc => (
-            <div key={loc.id} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
-              <div>
-                <p className="text-sm font-medium text-slate-500 mb-1">{loc.name}</p>
-                <h3 className="text-2xl font-bold text-slate-800">
-                  {loc.totalQty} <span className="text-sm font-normal text-slate-400 ml-1">items</span>
+            <div
+              key={loc.id}
+              className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-5 transition-shadow hover:shadow-sm"
+            >
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-slate-500">{loc.name}</p>
+                <h3 className="mt-1 text-2xl font-bold text-slate-800">
+                  {loc.totalQty}
+                  <span className="ml-1 text-sm font-normal text-slate-400">items</span>
                 </h3>
               </div>
-              <div className="w-12 h-12 rounded-full bg-brand-50 flex items-center justify-center text-brand-600">
-                <MapPin size={24} />
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+                <MapPin size={20} />
               </div>
             </div>
           ))}
         </div>
       )}
 
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
-        <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between gap-4">
+      <div className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
+        <div className="border-b border-slate-200 p-4">
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
+            <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <input
               type="text"
               placeholder="Search product or location..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+              className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             />
           </div>
-          <Button variant="primary" size="sm" className="gap-2" onClick={() => setOpnameModalOpen(true)}>
-            <ClipboardCheck size={16} />
-            Perform Stock Opname
-          </Button>
         </div>
 
         <div className="overflow-x-auto">
           {loading ? (
-            <div className="flex justify-center items-center h-48">
+            <div className="flex h-48 items-center justify-center">
               <LoadingSpinner size="md" />
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
-                  <th className="p-4 font-medium border-b border-slate-200">Product</th>
-                  <th className="p-4 font-medium border-b border-slate-200">Location</th>
-                  <th className="p-4 font-medium border-b border-slate-200 text-right">Qty Available</th>
+                <tr className="border-b border-slate-200 bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500">
+                  <th className="px-4 py-3">Product</th>
+                  <th className="px-4 py-3">Location</th>
+                  <th className="px-4 py-3 text-right">Qty Available</th>
                 </tr>
               </thead>
-              <tbody className="text-sm divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 text-sm">
                 {filteredStocks.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-4">
-                      <div className="font-semibold text-slate-900">{item.product?.display_name}</div>
-                      <div className="text-xs font-mono text-slate-500 mt-0.5">{item.product?.sku}</div>
+                  <tr key={item.id} className="transition-colors hover:bg-slate-50">
+                    <td className="px-4 py-3.5">
+                      <div className="font-medium text-slate-900">{item.product?.display_name}</div>
+                      <div className="mt-0.5 font-mono text-xs text-slate-500">{item.product?.sku}</div>
                     </td>
-                    <td className="p-4 text-slate-700 font-medium">
+                    <td className="px-4 py-3.5 text-slate-600">
                       {item.placement?.name}
                     </td>
-                    <td className="p-4 text-right">
-                      <Badge variant={item.quantity > 0 ? 'success' : 'danger'} className="text-sm font-semibold">
+                    <td className="px-4 py-3.5 text-right">
+                      <Badge variant={item.quantity > 0 ? 'success' : 'danger'}>
                         {item.quantity}
                       </Badge>
                     </td>
                   </tr>
                 ))}
+
                 {filteredStocks.length === 0 && (
                   <tr>
-                    <td colSpan="3" className="p-12 text-center">
-                      <div className="text-slate-400 mb-2 flex justify-center"><PackageOpen size={32} /></div>
-                      <div className="text-slate-600 font-medium">No stock data found</div>
-                      <div className="text-slate-500 text-sm mt-1">Stock balances will appear here when product movements are recorded.</div>
+                    <td colSpan="3" className="px-4 py-16 text-center">
+                      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                        <PackageOpen size={22} />
+                      </div>
+                      <div className="text-sm font-medium text-slate-700">No stock data found</div>
+                      <div className="mt-1 text-sm text-slate-500">
+                        Stock balances will appear here when product movements are recorded.
+                      </div>
                     </td>
                   </tr>
                 )}

@@ -1,113 +1,36 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import {
-  LayoutDashboard,
-  Package,
-  Layers,
-  FileText,
-  Users,
-  Settings,
-  X,
-  Briefcase,
-  ScanBarcode,
-  Activity,
-  ClipboardList,
-  DatabaseBackup
-} from 'lucide-react';
+import { X } from 'lucide-react';
 
 import { useAuth } from '../../contexts/AuthContext';
-import { hasPermission } from '../../utils/permissions';
+import { SIDEBARS } from '../../config/sidebar';
+
+import SidebarGroup from './sidebar/SidebarGroup';
 
 import logoUrl from '../../assets/logo/logo.webp';
 
 const Sidebar = ({ isOpen = false, onClose }) => {
-
   const { user } = useAuth();
 
-  const menuItems = [
+  // Untuk sementara hardcode, nanti diganti berdasarkan division user
+  const getSidebar = (user) => {
+    if (!user) return SIDEBARS.default;
 
-    {
-      name: 'Dashboard',
-      path: '/dashboard',
-      icon: <LayoutDashboard size={20} />,
-      permission: 'DASHBOARD'
-    },
+    switch (user.role?.name) {
+      case 'ADMIN':
+        return SIDEBARS.admin;
 
-    {
-      name: 'Work',
-      path: '/work',
-      icon: <Briefcase size={20} />,
-      permission: 'WORK'
-    },
+      case 'CREATIVE':
+        return SIDEBARS.creative;
 
-    {
-      name: 'Inventory',
-      path: '/inventory',
-      icon: <Package size={20} />,
-      permission: 'INVENTORY'
-    },
+      case 'STAFF':
+        return SIDEBARS.creative;
 
-    {
-      name: 'Products',
-      path: '/products',
-      icon: <Layers size={20} />,
-      permission: 'PRODUCTS'
-    },
-
-    {
-      name: 'Reports',
-      path: '/reports',
-      icon: <FileText size={20} />,
-      permission: 'REPORTS'
-    },
-
-    {
-      name: 'Operations / Scanner',
-      path: '/scanner',
-      icon: <ScanBarcode size={20} />,
-      permission: 'PRODUCTS' // Or a specific operation permission if available
-    },
-
-    {
-      name: 'Users',
-      path: '/users',
-      icon: <Users size={20} />,
-      permission: 'USERS'
-    },
-    
-    {
-      name: 'Activity Log',
-      path: '/logs/activity',
-      icon: <Activity size={20} />,
-      permission: 'USERS' // Only admins can see users, so only admins can see logs
-    },
-
-    {
-      name: 'Audit Log',
-      path: '/logs/audit',
-      icon: <ClipboardList size={20} />,
-      permission: 'USERS'
-    },
-
-    {
-      name: 'System Backups',
-      path: '/system/backups',
-      icon: <DatabaseBackup size={20} />,
-      permission: 'USERS'
-    },
-
-    {
-      name: 'Settings',
-      path: '/settings',
-      icon: <Settings size={20} />,
-      permission: 'SETTINGS'
+      default:
+        return SIDEBARS.default;
     }
+  };
 
-  ];
-
-  const visibleMenus = menuItems.filter(menu =>
-    hasPermission(user, menu.permission)
-  );
+  const sidebar = getSidebar(user);
 
   return (
     <>
@@ -126,23 +49,18 @@ const Sidebar = ({ isOpen = false, onClose }) => {
           lg:translate-x-0 lg:z-40
         `}
       >
-
+        {/* Header */}
         <div className="flex h-16 items-center justify-between border-b border-slate-100 px-6">
-
-          <div className="flex items-center gap-2 font-bold text-md text-slate-800">
-
+          <div className="flex items-center gap-2 text-md font-bold text-slate-800">
             <div className="flex h-8 w-8 overflow-hidden">
-
               <img
                 src={logoUrl}
                 alt="Logo"
                 className="h-full w-full object-cover"
               />
-
             </div>
 
             WADIMOR CREATIVE
-
           </div>
 
           <button
@@ -151,55 +69,20 @@ const Sidebar = ({ isOpen = false, onClose }) => {
           >
             <X size={20} />
           </button>
-
         </div>
 
-        <div className="flex h-[calc(100vh-4rem)] flex-col justify-between overflow-y-auto px-4 py-6">
+        {/* Menu */}
+        <div className="h-[calc(100vh-4rem)] overflow-y-auto px-4 py-6">
 
-          <ul className="space-y-1.5">
-
-            {visibleMenus.map(item => (
-
-              <li key={item.name}>
-
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all
-                    ${
-                      isActive
-                        ? 'bg-brand-50 text-brand-600'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                    }`
-                  }
-                >
-
-                  {({ isActive }) => (
-                    <>
-                      <span
-                        className={`transition-transform group-hover:scale-110 ${
-                          isActive
-                            ? 'text-brand-600'
-                            : 'text-slate-400 group-hover:text-slate-600'
-                        }`}
-                      >
-                        {item.icon}
-                      </span>
-
-                      {item.name}
-                    </>
-                  )}
-
-                </NavLink>
-
-              </li>
-
-            ))}
-
-          </ul>
+          {sidebar.map((group) => (
+            <SidebarGroup
+              key={group.title}
+              group={group}
+              user={user}
+            />
+          ))}
 
         </div>
-
       </aside>
     </>
   );
