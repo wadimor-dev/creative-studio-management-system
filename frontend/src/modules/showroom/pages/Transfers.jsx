@@ -5,23 +5,17 @@ import StockCard from '../components/StockCard';
 import Badge from '../../../components/common/Badge';
 import DataTable from '../../../components/common/DataTable';
 import { useShowroomTransfers } from '../../../hooks/useShowroom';
+import { STATUS_VARIANT, TRANSFER_STATUS_FILTER } from '../constants';
+import { formatDate, formatStatus } from '../helpers';
 import {
   Truck,
   Clock,
   CheckCircle,
-  XCircle,
   Plus,
   ArrowUpRight,
   Eye,
   X,
 } from 'lucide-react';
-
-const statusVariant = {
-  pending: 'warning',
-  in_transit: 'info',
-  completed: 'success',
-  cancelled: 'danger',
-};
 
 const Transfers = () => {
   const [selectedStatus, setSelectedStatus] = React.useState('all');
@@ -76,22 +70,19 @@ const Transfers = () => {
     {
       header: 'Tanggal',
       accessor: 'createdAt',
-      cell: (row) => new Date(row.createdAt).toLocaleDateString('id-ID'),
+      cell: (row) => formatDate(row.createdAt),
     },
     {
       header: 'Estimasi Tiba',
       accessor: 'estimatedArrival',
-      cell: (row) => new Date(row.estimatedArrival).toLocaleDateString('id-ID'),
+      cell: (row) => formatDate(row.estimatedArrival),
     },
     {
       header: 'Status',
       accessor: 'status',
       cell: (row) => (
-        <Badge variant={statusVariant[row.status] || 'default'}>
-          {row.status === 'pending' ? 'Pending' :
-           row.status === 'in_transit' ? 'Dalam Perjalanan' :
-           row.status === 'completed' ? 'Selesai' :
-           row.status === 'cancelled' ? 'Dibatalkan' : row.status}
+        <Badge variant={STATUS_VARIANT[row.status] || 'default'}>
+          {formatStatus(row.status)}
         </Badge>
       ),
     },
@@ -175,41 +166,16 @@ const Transfers = () => {
 
       {/* Status Filter */}
       <div className="flex items-center gap-2">
-        <Button
-          variant={selectedStatus === 'all' ? 'primary' : 'outline'}
-          size="sm"
-          onClick={() => handleStatusFilter('all')}
-        >
-          Semua
-        </Button>
-        <Button
-          variant={selectedStatus === 'pending' ? 'primary' : 'outline'}
-          size="sm"
-          onClick={() => handleStatusFilter('pending')}
-        >
-          Pending
-        </Button>
-        <Button
-          variant={selectedStatus === 'in_transit' ? 'primary' : 'outline'}
-          size="sm"
-          onClick={() => handleStatusFilter('in_transit')}
-        >
-          Dalam Perjalanan
-        </Button>
-        <Button
-          variant={selectedStatus === 'completed' ? 'primary' : 'outline'}
-          size="sm"
-          onClick={() => handleStatusFilter('completed')}
-        >
-          Selesai
-        </Button>
-        <Button
-          variant={selectedStatus === 'cancelled' ? 'primary' : 'outline'}
-          size="sm"
-          onClick={() => handleStatusFilter('cancelled')}
-        >
-          Dibatalkan
-        </Button>
+        {TRANSFER_STATUS_FILTER.map(({ value, label }) => (
+          <Button
+            key={value}
+            variant={selectedStatus === value ? 'primary' : 'outline'}
+            size="sm"
+            onClick={() => handleStatusFilter(value)}
+          >
+            {label}
+          </Button>
+        ))}
       </div>
 
       {/* Transfers Table */}

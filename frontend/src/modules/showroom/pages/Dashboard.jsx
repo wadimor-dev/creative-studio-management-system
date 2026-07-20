@@ -3,6 +3,8 @@ import PageHeader from '../../../components/common/PageHeader';
 import Badge from '../../../components/common/Badge';
 import Button from '../../../components/common/Button';
 import { useShowroomDashboard } from '../../../hooks/useShowroom';
+import { TYPE_VARIANT, STATUS_VARIANT } from '../constants';
+import { formatMovementType, formatStatus } from '../helpers';
 import {
   Package,
   Users,
@@ -13,19 +15,6 @@ import {
   ArrowDownRight,
   RefreshCw,
 } from 'lucide-react';
-
-const statusVariant = {
-  completed: 'success',
-  pending: 'warning',
-  in_transit: 'info',
-  cancelled: 'danger',
-};
-
-const typeVariant = {
-  IN: 'success',
-  OUT: 'danger',
-  TRANSFER: 'info',
-};
 
 const Dashboard = () => {
   const { stats, movements, loading, error, refetch } = useShowroomDashboard();
@@ -96,13 +85,11 @@ const Dashboard = () => {
                   <span className={`text-sm font-medium ${movement.type === 'IN' ? 'text-emerald-600' : movement.type === 'OUT' ? 'text-rose-600' : 'text-blue-600'}`}>
                     {movement.type === 'IN' ? '+' : movement.type === 'OUT' ? '-' : ''}{movement.quantity}
                   </span>
-                  <Badge variant={typeVariant[movement.type] || 'default'}>
-                    {movement.type === 'IN' ? 'Masuk' : movement.type === 'OUT' ? 'Keluar' : 'Transfer'}
+                  <Badge variant={TYPE_VARIANT[movement.type] || 'default'}>
+                    {formatMovementType(movement.type)}
                   </Badge>
-                  <Badge variant={statusVariant[movement.status] || 'default'}>
-                    {movement.status === 'completed' ? 'Selesai' :
-                     movement.status === 'pending' ? 'Pending' :
-                     movement.status === 'in_transit' ? 'Dalam Perjalanan' : movement.status}
+                  <Badge variant={STATUS_VARIANT[movement.status] || 'default'}>
+                    {formatStatus(movement.status)}
                   </Badge>
                 </div>
               </div>

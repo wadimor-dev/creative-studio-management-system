@@ -1,28 +1,30 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-
-import Dashboard from './pages/Dashboard';
-import Stock from './pages/Stock';
-import Transfers from './pages/Transfers';
-import StockIn from './pages/StockIn';
-import StockOut from './pages/StockOut';
-// import Products from './pages/Products';
-// import Customers from './pages/Customers';
-// import Orders from './pages/Orders';
-// import Delivery from './pages/Delivery';
+import Dashboard from './pages/DashboardV2';
+import SampleManagement from './pages/SampleManagement';
+import BorrowingPage from './pages/BorrowingPage';
+import GuestManagement from './pages/GuestManagement';
+import StockControl from './pages/StockControl';
+import Reporting from './pages/Reporting';
+import MasterData from './pages/MasterData';
+import LocationManagement from './pages/LocationManagement';
+import StorageManagement from './pages/StorageManagement';
+import ScanStorage from './pages/ScanStorage';
+import QRGenerator from './pages/QRGenerator';
 
 const ShowroomRoutes = () => (
   <Routes>
     <Route index element={<Navigate to="dashboard" replace />} />
     <Route path="dashboard" element={<Dashboard />} />
-    <Route path="stock" element={<Stock />} />
-    <Route path="transfers" element={<Transfers />} />
-    <Route path="stock-in" element={<StockIn />} />
-    <Route path="stock-out" element={<StockOut />} />
-    {/* <Route path="products" element={<Products />} />
-    <Route path="customers" element={<Customers />} />
-    <Route path="orders" element={<Orders />} />
-    <Route path="delivery" element={<Delivery />} /> */}
+    <Route path="samples" element={<SampleManagement />} />
+    <Route path="borrowings" element={<BorrowingPage />} />
+    <Route path="guests" element={<GuestManagement />} />
+    <Route path="stock-control" element={<StockControl />} />
+    <Route path="locations" element={<LocationManagement />} />
+    <Route path="storage" element={<StorageManagement />} />
+    <Route path="scan" element={<ScanStorage />} />
+    <Route path="qr-generator" element={<QRGenerator />} />
+    <Route path="reports" element={<Reporting />} />
+    <Route path="master-data" element={<MasterData />} />
   </Routes>
 );
 

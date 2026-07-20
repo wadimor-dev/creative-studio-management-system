@@ -1,6 +1,7 @@
 import React from 'react';
 
-const PageHeader = ({ title, description, action }) => {
+const PageHeader = ({ title, description, action, actions }) => {
+  const content = actions || action;
   return (
     <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
       <div>
@@ -9,9 +10,9 @@ const PageHeader = ({ title, description, action }) => {
           <p className="mt-1 text-sm text-slate-500">{description}</p>
         )}
       </div>
-      {action && (
+      {content && (
         <div className="flex-shrink-0">
-          {action}
+          {content}
         </div>
       )}
     </div>

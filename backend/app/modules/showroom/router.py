@@ -9,6 +9,7 @@ from app.modules.showroom.routes import (
     stock_in_router,
     stock_out_router,
     locations_router,
+    products_router,
 )
 
 router = APIRouter()
@@ -19,3 +20,4 @@ router.include_router(transfers_router)
 router.include_router(stock_in_router)
 router.include_router(stock_out_router)
 router.include_router(locations_router)
+router.include_router(products_router)

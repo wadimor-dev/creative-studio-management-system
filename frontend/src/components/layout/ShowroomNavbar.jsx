@@ -4,10 +4,13 @@ import { Menu, Bell } from 'lucide-react';
 
 const titleMap = {
   '/showroom': 'Dashboard',
-  '/showroom/products': 'Produk',
-  '/showroom/customers': 'Pelanggan',
-  '/showroom/orders': 'Pesanan',
-  '/showroom/delivery': 'Pengiriman',
+  '/showroom/dashboard': 'Dashboard',
+  '/showroom/samples': 'Sample Management',
+  '/showroom/borrowings': 'Peminjaman',
+  '/showroom/guests': 'Manajemen Tamu',
+  '/showroom/stock-control': 'Kontrol Stok',
+  '/showroom/reports': 'Pelaporan',
+  '/showroom/master-data': 'Master Data',
 };
 
 const ShowroomNavbar = ({ onMenuToggle }) => {

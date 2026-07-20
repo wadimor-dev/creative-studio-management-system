@@ -4,6 +4,7 @@ from app.modules.showroom.routes.transfers import router as transfers_router
 from app.modules.showroom.routes.stock_in import router as stock_in_router
 from app.modules.showroom.routes.stock_out import router as stock_out_router
 from app.modules.showroom.routes.locations import router as locations_router
+from app.modules.showroom.routes.products import router as products_router
 
 __all__ = [
     "dashboard_router",
@@ -12,4 +13,5 @@ __all__ = [
     "stock_in_router",
     "stock_out_router",
     "locations_router",
+    "products_router",
 ]

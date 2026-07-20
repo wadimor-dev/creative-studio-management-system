@@ -1,21 +1,10 @@
 import React from 'react';
 import DataTable from '../../../components/common/DataTable';
 import Badge from '../../../components/common/Badge';
+import { TYPE_VARIANT, STATUS_VARIANT, MOVEMENT_TYPE } from '../constants';
+import { formatDate, formatMovementType, formatStatus, formatQuantity } from '../helpers';
 
 const StockMovementTable = ({ data, isLoading }) => {
-  const typeVariant = {
-    IN: 'success',
-    OUT: 'danger',
-    TRANSFER: 'info',
-  };
-
-  const statusVariant = {
-    completed: 'success',
-    pending: 'warning',
-    cancelled: 'danger',
-    in_transit: 'info',
-  };
-
   const columns = [
     {
       header: 'ID',
@@ -36,8 +25,8 @@ const StockMovementTable = ({ data, isLoading }) => {
       header: 'Tipe',
       accessor: 'type',
       cell: (row) => (
-        <Badge variant={typeVariant[row.type] || 'default'}>
-          {row.type === 'IN' ? 'Masuk' : row.type === 'OUT' ? 'Keluar' : 'Transfer'}
+        <Badge variant={TYPE_VARIANT[row.type] || 'default'}>
+          {formatMovementType(row.type)}
         </Badge>
       ),
     },
@@ -45,8 +34,8 @@ const StockMovementTable = ({ data, isLoading }) => {
       header: 'Quantity',
       accessor: 'quantity',
       cell: (row) => (
-        <span className={`font-medium ${row.type === 'IN' ? 'text-emerald-600' : 'text-rose-600'}`}>
-          {row.type === 'IN' ? '+' : '-'}{row.quantity}
+        <span className={`font-medium ${row.type === MOVEMENT_TYPE.IN ? 'text-emerald-600' : 'text-rose-600'}`}>
+          {formatQuantity(row.quantity, row.type)}
         </span>
       ),
     },
@@ -57,17 +46,14 @@ const StockMovementTable = ({ data, isLoading }) => {
     {
       header: 'Tanggal',
       accessor: 'date',
-      cell: (row) => new Date(row.date).toLocaleDateString('id-ID'),
+      cell: (row) => formatDate(row.date),
     },
     {
       header: 'Status',
       accessor: 'status',
       cell: (row) => (
-        <Badge variant={statusVariant[row.status] || 'default'}>
-          {row.status === 'completed' ? 'Selesai' : 
-           row.status === 'pending' ? 'Pending' :
-           row.status === 'cancelled' ? 'Dibatalkan' :
-           row.status === 'in_transit' ? 'Dalam Perjalanan' : row.status}
+        <Badge variant={STATUS_VARIANT[row.status] || 'default'}>
+          {formatStatus(row.status)}
         </Badge>
       ),
     },

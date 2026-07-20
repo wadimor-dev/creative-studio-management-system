@@ -37,6 +37,7 @@ import BackupManager from '../pages/System/BackupManager';
 // import ShowroomDashboard from '../modules/showroom/pages/Dashboard';
 import ShowroomLayout from '../layouts/ShowroomLayout';
 import ShowroomRoutes from '../modules/showroom/routes';
+import ScanLocation from '../pages/ScanLocation';
 
 import { useAuth } from '../contexts/AuthContext';
 
@@ -129,6 +130,9 @@ const AppRoutes = () => {
       
       {/* 404 Catch All */}
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
+
+      {/* Public Scan Page (no auth) */}
+      <Route path="/scan/:code" element={<ScanLocation />} />
 
       {/* SHOWROOM */}
       <Route element={<ShowroomLayout />}>

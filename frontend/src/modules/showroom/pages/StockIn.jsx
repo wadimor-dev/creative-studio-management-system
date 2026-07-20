@@ -7,53 +7,21 @@ import Input from '../../../components/common/Input';
 import Select from '../../../components/common/Select';
 import Textarea from '../../../components/common/Textarea';
 import Badge from '../../../components/common/Badge';
-import { useShowroomStockIn, useShowroomLocations } from '../../../hooks/useShowroom';
+import { useShowroomStockIn } from '../../../hooks/useShowroom';
+import { STATUS_VARIANT, LOCATION_OPTIONS, SUPPLIER_OPTIONS, PRODUCT_OPTIONS } from '../constants';
+import { formatDate, formatStatus, getInitialStockInForm } from '../helpers';
 import {
   ArrowUpRight,
   Plus,
   Package,
   Calendar,
   User,
-  FileText,
 } from 'lucide-react';
-
-const locations = [
-  { value: 'showroom-utama', label: 'Showroom Utama' },
-  { value: 'cabang-a', label: 'Cabang A' },
-  { value: 'cabang-b', label: 'Cabang B' },
-  { value: 'gudang', label: 'Gudang' },
-];
-
-const suppliers = [
-  { value: '', label: 'Pilih Supplier' },
-  { value: 'pt-batik-jaya', label: 'PT Batik Jaya' },
-  { value: 'cv-tenun-nusantara', label: 'CV Tenun Nusantara' },
-  { value: 'ud-songket-asli', label: 'UD Songket Asli' },
-  { value: 'kerajinan-batak', label: 'Kerajinan Batak' },
-  { value: 'seni-batik-solo', label: 'Seni Batik Solo' },
-];
-
-const products = [
-  { value: '', label: 'Pilih Produk' },
-  { value: 'sku-001', label: 'Kain Batik Motif X' },
-  { value: 'sku-002', label: 'Kain Tenun Ikat' },
-  { value: 'sku-003', label: 'Songket Palembang' },
-  { value: 'sku-004', label: 'Ulos Batak' },
-  { value: 'sku-005', label: 'Batik Tulis Solo' },
-];
 
 const StockIn = () => {
   const [showForm, setShowForm] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [formData, setFormData] = React.useState({
-    product: '',
-    quantity: '',
-    supplier: '',
-    location: 'showroom-utama',
-    date: new Date().toISOString().split('T')[0],
-    reference: '',
-    notes: '',
-  });
+  const [formData, setFormData] = React.useState(getInitialStockInForm());
 
   const { stats, stockIn, loading, error, refetch, createStockIn } = useShowroomStockIn();
 
@@ -67,26 +35,12 @@ const StockIn = () => {
       setIsSubmitting(true);
       await createStockIn(formData);
       setShowForm(false);
-      setFormData({
-        product: '',
-        quantity: '',
-        supplier: '',
-        location: 'showroom-utama',
-        date: new Date().toISOString().split('T')[0],
-        reference: '',
-        notes: '',
-      });
+      setFormData(getInitialStockInForm());
     } catch (err) {
       console.error('Failed to create stock in:', err);
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const statusVariant = {
-    completed: 'success',
-    pending: 'warning',
-    cancelled: 'danger',
   };
 
   const columns = [
@@ -123,7 +77,7 @@ const StockIn = () => {
     {
       header: 'Tanggal',
       accessor: 'date',
-      cell: (row) => new Date(row.date).toLocaleDateString('id-ID'),
+      cell: (row) => formatDate(row.date),
     },
     {
       header: 'Reference',
@@ -134,10 +88,8 @@ const StockIn = () => {
       header: 'Status',
       accessor: 'status',
       cell: (row) => (
-        <Badge variant={statusVariant[row.status] || 'default'}>
-          {row.status === 'completed' ? 'Selesai' :
-           row.status === 'pending' ? 'Pending' :
-           row.status === 'cancelled' ? 'Dibatalkan' : row.status}
+        <Badge variant={STATUS_VARIANT[row.status] || 'default'}>
+          {formatStatus(row.status)}
         </Badge>
       ),
     },
@@ -201,7 +153,7 @@ const StockIn = () => {
                 <Select
                   value={formData.product}
                   onChange={(e) => handleInputChange('product', e.target.value)}
-                  options={products}
+                  options={PRODUCT_OPTIONS}
                 />
               </div>
               <div>
@@ -225,7 +177,7 @@ const StockIn = () => {
                 <Select
                   value={formData.supplier}
                   onChange={(e) => handleInputChange('supplier', e.target.value)}
-                  options={suppliers}
+                  options={SUPPLIER_OPTIONS}
                 />
               </div>
               <div>
@@ -235,7 +187,7 @@ const StockIn = () => {
                 <Select
                   value={formData.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
-                  options={locations}
+                  options={LOCATION_OPTIONS}
                 />
               </div>
             </div>

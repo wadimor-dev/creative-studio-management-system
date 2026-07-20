@@ -26,6 +26,12 @@ from app.modules.showroom.schemas.stock_out import (
     StockOutStats,
 )
 from app.modules.showroom.schemas.locations import ShowroomLocation
+from app.modules.showroom.schemas.products import (
+    ShowroomProductOption,
+    ShowroomScanStock,
+    ShowroomScanPlacement,
+    ShowroomScanProduct,
+)
 
 __all__ = [
     "ShowroomDashboardStats",
@@ -46,4 +52,8 @@ __all__ = [
     "StockOutResponse",
     "StockOutStats",
     "ShowroomLocation",
+    "ShowroomProductOption",
+    "ShowroomScanStock",
+    "ShowroomScanPlacement",
+    "ShowroomScanProduct",
 ]

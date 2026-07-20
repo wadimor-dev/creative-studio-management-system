@@ -3,36 +3,39 @@ import { Outlet, NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   Package,
+  ArrowLeftRight,
   Users,
-  ShoppingCart,
-  Truck,
+  ClipboardCheck,
+  BarChart3,
+  Settings,
+  MapPin,
+  FolderTree,
+  ScanLine,
+  QrCode,
   X,
   ArrowLeft,
   Menu,
-  ArrowUpRight,
-  ArrowDownRight,
-  RefreshCw,
-  Box,
 } from 'lucide-react';
 
 const navItems = [
   { to: '/showroom/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/showroom/stock', label: 'Stok', icon: Box },
-  { to: '/showroom/transfers', label: 'Transfer', icon: RefreshCw },
-  { to: '/showroom/stock-in', label: 'Barang Masuk', icon: ArrowUpRight },
-  { to: '/showroom/stock-out', label: 'Barang Keluar', icon: ArrowDownRight },
-  { to: '/showroom/products', label: 'Produk', icon: Package },
-  { to: '/showroom/customers', label: 'Pelanggan', icon: Users },
-  { to: '/showroom/orders', label: 'Pesanan', icon: ShoppingCart },
-  { to: '/showroom/delivery', label: 'Pengiriman', icon: Truck },
+  { to: '/showroom/samples', label: 'Sample Management', icon: Package },
+  { to: '/showroom/borrowings', label: 'Peminjaman', icon: ArrowLeftRight },
+  { to: '/showroom/guests', label: 'Manajemen Tamu', icon: Users },
+  { to: '/showroom/stock-control', label: 'Kontrol Stok', icon: ClipboardCheck },
+  { to: '/showroom/locations', label: 'Lokasi & QR Code', icon: MapPin },
+  { to: '/showroom/storage', label: 'Storage Management', icon: FolderTree },
+  { to: '/showroom/scan', label: 'Scan QR', icon: ScanLine },
+  { to: '/showroom/qr-generator', label: 'QR Generator', icon: QrCode },
+  { to: '/showroom/reports', label: 'Pelaporan', icon: BarChart3 },
+  { to: '/showroom/master-data', label: 'Master Data', icon: Settings },
 ];
 
 const ShowroomLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-stone-50">
-      {/* Mobile sidebar backdrop */}
+    <div className="flex h-screen bg-slate-50">
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
@@ -40,27 +43,26 @@ const ShowroomLayout = () => {
         />
       )}
 
-      {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-neutral-900 flex flex-col
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 flex flex-col
           transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
-        <div className="flex items-center justify-between h-16 px-5 border-b border-neutral-800">
+        <div className="flex items-center justify-between h-16 px-5 border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded bg-amber-500 text-neutral-900 font-semibold text-sm">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white font-semibold text-sm">
               S
             </div>
             <div className="leading-tight">
               <p className="text-sm font-semibold text-white">Showroom</p>
-              <p className="text-[11px] text-neutral-500 tracking-wide uppercase">
+              <p className="text-[11px] text-slate-400 tracking-wide uppercase">
                 Modul Internal
               </p>
             </div>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-neutral-400 hover:text-white"
+            className="lg:hidden text-slate-400 hover:text-white"
           >
             <X size={20} />
           </button>
@@ -73,12 +75,12 @@ const ShowroomLayout = () => {
               to={to}
               end={end}
               className={({ isActive }) =>
-                `group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium
-                transition-colors border-l-2
+                `group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium
+                transition-all duration-200 border-l-2
                 ${
                   isActive
-                    ? 'bg-neutral-800 text-white border-amber-500'
-                    : 'text-neutral-400 border-transparent hover:bg-neutral-800/60 hover:text-neutral-200'
+                    ? 'bg-slate-800 text-white border-brand-500 shadow-sm'
+                    : 'text-slate-400 border-transparent hover:bg-slate-800/60 hover:text-slate-200'
                 }`
               }
             >
@@ -88,10 +90,10 @@ const ShowroomLayout = () => {
           ))}
         </nav>
 
-        <div className="px-3 py-4 border-t border-neutral-800">
+        <div className="px-3 py-4 border-t border-slate-800">
           <NavLink
             to="/dashboard"
-            className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-neutral-400 hover:bg-neutral-800/60 hover:text-neutral-200 transition-colors"
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors"
           >
             <ArrowLeft size={18} className="shrink-0" />
             <span>Kembali ke Aplikasi Utama</span>
@@ -99,26 +101,23 @@ const ShowroomLayout = () => {
         </div>
       </aside>
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Mobile header */}
-        <header className="lg:hidden flex items-center justify-between h-16 px-4 bg-white border-b border-stone-200">
+        <header className="lg:hidden flex items-center justify-between h-16 px-4 bg-white border-b border-slate-200">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-neutral-600 hover:text-neutral-900"
+            className="text-slate-600 hover:text-slate-900"
           >
             <Menu size={24} />
           </button>
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded bg-amber-500 text-neutral-900 font-semibold text-xs">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-500 text-white font-semibold text-xs">
               S
             </div>
-            <span className="text-sm font-semibold text-neutral-900">Showroom</span>
+            <span className="text-sm font-semibold text-slate-900">Showroom</span>
           </div>
           <div className="w-6" />
         </header>
 
-        {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           <Outlet />
         </main>

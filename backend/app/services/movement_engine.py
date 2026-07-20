@@ -81,7 +81,8 @@ class MovementEngine:
         reference: Optional[str] = None,
         reference_type: Optional[str] = None,
         reference_id: Optional[int] = None,
-        notes: Optional[str] = None
+        notes: Optional[str] = None,
+        commit: bool = True,
     ) -> ProductMovement:
         """
         Executes a stock movement and creates a movement record.
@@ -142,7 +143,10 @@ class MovementEngine:
             user_id=user_id
         )
         self.db.add(movement)
-        self.db.commit()
+        if commit:
+            self.db.commit()
+        else:
+            self.db.flush()
         self.db.refresh(movement)
-        
+
         return movement

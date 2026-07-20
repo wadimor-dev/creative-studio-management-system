@@ -15,6 +15,17 @@ The system is built using a modern client-server architecture with a React front
 - Analytics charts
 - Activity summary
 
+## Showroom Storage & QR System
+- Physical storage location management (hierarchical tree)
+- QR code generation & scanning
+- Stock in/out via QR scan
+- Inventory check via QR scan
+- Storage heatmap dashboard
+- Offline queue for mobile scanning
+- Activity logging & audit trail
+- Role-based access control (4 roles × 12 permissions)
+- Optimistic locking for concurrent safety
+
 ## Work Management
 - Daily work activities
 - Start / Pause / Resume / Complete workflow

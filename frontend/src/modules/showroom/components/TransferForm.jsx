@@ -4,35 +4,13 @@ import Button from '../../../components/common/Button';
 import Input from '../../../components/common/Input';
 import Select from '../../../components/common/Select';
 import Textarea from '../../../components/common/Textarea';
+import { LOCATION_OPTIONS, PRODUCT_OPTIONS } from '../constants';
+import { getInitialTransferForm } from '../helpers';
 import { X, Plus, Trash2 } from 'lucide-react';
 
 const TransferForm = ({ isOpen, onClose, onSubmit }) => {
-  const [formData, setFormData] = React.useState({
-    fromLocation: '',
-    toLocation: '',
-    items: [{ product: '', quantity: '' }],
-    estimatedArrival: '',
-    notes: '',
-  });
-
+  const [formData, setFormData] = React.useState(getInitialTransferForm());
   const [errors, setErrors] = React.useState({});
-
-  const locations = [
-    { value: '', label: 'Pilih Lokasi' },
-    { value: 'showroom-utama', label: 'Showroom Utama' },
-    { value: 'cabang-a', label: 'Cabang A' },
-    { value: 'cabang-b', label: 'Cabang B' },
-    { value: 'gudang', label: 'Gudang' },
-  ];
-
-  const products = [
-    { value: '', label: 'Pilih Produk' },
-    { value: 'sku-001', label: 'Kain Batik Motif X' },
-    { value: 'sku-002', label: 'Kain Tenun Ikat' },
-    { value: 'sku-003', label: 'Songket Palembang' },
-    { value: 'sku-004', label: 'Ulos Batak' },
-    { value: 'sku-005', label: 'Batik Tulis Solo' },
-  ];
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -91,13 +69,7 @@ const TransferForm = ({ isOpen, onClose, onSubmit }) => {
   };
 
   const handleClose = () => {
-    setFormData({
-      fromLocation: '',
-      toLocation: '',
-      items: [{ product: '', quantity: '' }],
-      estimatedArrival: '',
-      notes: '',
-    });
+    setFormData(getInitialTransferForm());
     setErrors({});
     onClose();
   };
@@ -113,7 +85,7 @@ const TransferForm = ({ isOpen, onClose, onSubmit }) => {
             <Select
               value={formData.fromLocation}
               onChange={(e) => handleInputChange('fromLocation', e.target.value)}
-              options={locations}
+              options={LOCATION_OPTIONS}
               error={errors.fromLocation}
             />
           </div>
@@ -124,7 +96,7 @@ const TransferForm = ({ isOpen, onClose, onSubmit }) => {
             <Select
               value={formData.toLocation}
               onChange={(e) => handleInputChange('toLocation', e.target.value)}
-              options={locations}
+              options={LOCATION_OPTIONS}
               error={errors.toLocation}
             />
           </div>
@@ -166,7 +138,7 @@ const TransferForm = ({ isOpen, onClose, onSubmit }) => {
                   <Select
                     value={item.product}
                     onChange={(e) => handleItemChange(index, 'product', e.target.value)}
-                    options={products}
+                    options={PRODUCT_OPTIONS}
                     error={errors[`item_${index}_product`]}
                   />
                 </div>
