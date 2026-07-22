@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.models.location import Location
 from app.schemas.location import LocationCreate, LocationUpdate, LocationResponse
 from app.common.responses import SuccessResponse, create_success_response
 from app.dependencies.permission import RequirePermission
 from app.constants.permissions import Permission
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 
 router = APIRouter()
 

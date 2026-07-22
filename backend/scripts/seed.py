@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 import logging
-from app.database.session import SessionLocal
+from app.core.database.session import SessionLocal
 
 logger = logging.getLogger(__name__)
 

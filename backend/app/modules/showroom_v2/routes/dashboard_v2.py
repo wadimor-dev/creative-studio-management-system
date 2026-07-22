@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 from app.modules.showroom_v2.schemas import SuccessResponse
 from app.modules.showroom_v2.services.dashboard_service import DashboardService
 from app.modules.showroom_v2.services.analytics_service import AnalyticsService
-from app.modules.showroom_v2.services.snapshot_service import SnapshotService
+from app.core.storage.snapshot_service import SnapshotService
 from app.modules.showroom_v2.services.borrowing_service import BorrowingService
 from app.modules.showroom_v2.services.guest_service import GuestService
 

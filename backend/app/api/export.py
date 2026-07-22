@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.services.export import export_manager, RendererType, RenderContext
 from app.repositories.item_repository import item_repo
 from app.dependencies.permission import RequirePermission

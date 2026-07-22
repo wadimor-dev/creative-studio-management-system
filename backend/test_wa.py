@@ -3,11 +3,12 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi.testclient import TestClient
-from main import app
-from app.database.session import SessionLocal
+from app.main import app
+from app.core.database.session import SessionLocal
 from app.models.user import User
 from app.models.role import Role
-from app.core.security import get_password_hash
+from app.core.auth.password import get_password_hash
+from app.core.authorization.repositories import user_role_repo
 
 client = TestClient(app)
 
@@ -17,13 +18,15 @@ def setup_test_user():
     user = db.query(User).filter(User.username == "testwauser").first()
     if not user:
         user = User(
-            username="testwauser", 
-            email="testwauser@example.com", 
-            hashed_password=get_password_hash("password123"), 
-            role_id=role.id
+            username="testwauser",
+            email="testwauser@example.com",
+            hashed_password=get_password_hash("password123"),
         )
         db.add(user)
         db.commit()
+        db.refresh(user)
+        if role:
+            user_role_repo.set_user_roles(db, user.id, [role.id])
     db.close()
 
 def login():

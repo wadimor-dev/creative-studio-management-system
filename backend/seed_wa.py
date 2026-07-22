@@ -4,7 +4,7 @@ import os
 # Add backend dir to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from app.database.session import SessionLocal
+from app.core.database.session import SessionLocal
 from app.models.division import Division
 from app.models.work_category import WorkCategory
 

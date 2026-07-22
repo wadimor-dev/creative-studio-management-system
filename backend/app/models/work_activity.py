@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey, DateT
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone, timedelta
 from app.constants.work_activity import WorkActivityStatus
-from app.database.base import Base
+from app.core.database.base import Base
 
 class WorkActivity(Base):
     __tablename__ = "work_activities"

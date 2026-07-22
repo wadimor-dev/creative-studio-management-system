@@ -11,7 +11,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from app.core.config import settings
-from app.database.base import Base
+from app.core.database.base import Base
 import app.models  # load models for metadata
 
 # this is the Alembic Config object, which provides

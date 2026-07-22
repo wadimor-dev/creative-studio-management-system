@@ -94,6 +94,14 @@ export const ENDPOINTS = {
       REBUILD_SUMMARY: '/showroom-v2/dashboard/rebuild-summary',
       SUMMARY_HISTORY: '/showroom-v2/dashboard/summary-history',
     },
+    MANAGE: {
+      BASE: '/showroom-v2/manage',
+      REPORT: '/showroom-v2/manage/report',
+      MOVEMENT_TYPES: '/showroom-v2/movement-types',
+    },
+    MOVEMENT_TYPES: {
+      BASE: '/showroom-v2/movement-types',
+    },
   },
 };
 

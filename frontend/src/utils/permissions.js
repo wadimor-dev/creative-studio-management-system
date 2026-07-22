@@ -17,7 +17,6 @@ export const PERMISSIONS = {
 };
 
 export const hasPermission = (user, permission) => {
-  if (!user?.role?.name) return false;
-
-  return PERMISSIONS[permission]?.includes(user.role.name);
+  if (!user?.roles || !Array.isArray(user.roles)) return false;
+  return user.roles.some(role => PERMISSIONS[permission]?.includes(role.name));
 };

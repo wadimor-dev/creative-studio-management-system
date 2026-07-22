@@ -4,7 +4,7 @@ from app.repositories.category_repository import category_repo
 from app.repositories.unit_repository import unit_repo
 from app.repositories.location_repository import location_repo
 from app.schemas.item import ItemCreate, ItemUpdate
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 from app.models.item_stock import ItemStock
 from app.models.inventory_transaction import InventoryMovementType
 from app.repositories.inventory_repository import inventory_transaction_repo

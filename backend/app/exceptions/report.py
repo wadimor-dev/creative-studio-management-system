@@ -1,5 +1,5 @@
 from fastapi import status
-from app.exceptions.base import AppException
+from app.core.exceptions import AppException
 
 class ReportException(AppException):
     pass

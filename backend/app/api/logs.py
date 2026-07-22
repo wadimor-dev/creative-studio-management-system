@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from typing import List, Any
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.dependencies.auth import get_current_user
 from app.models.activity_log import ActivityLog
 from app.models.audit_log import AuditLog

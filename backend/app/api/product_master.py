@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Type, Any
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.models.product_master import ProductType, ProductCategory, ProductMotif, ProductSubMotif, ProductColor
 from app.schemas.product_master import ProductMasterCreate, ProductMasterUpdate, ProductMasterResponse
 from app.common.responses import SuccessResponse, create_success_response
 from app.dependencies.permission import RequirePermission
 from app.constants.permissions import Permission
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 
 router = APIRouter()
 

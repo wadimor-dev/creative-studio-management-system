@@ -1,4 +1,4 @@
-from app.database.session import SessionLocal
+from app.core.database.session import SessionLocal
 from app.models.work_activity import WorkActivity
 from app.constants.work_activity import WorkActivityStatus
 from sqlalchemy import func

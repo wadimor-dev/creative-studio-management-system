@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 from app.modules.showroom_v2.schemas import SuccessResponse
-from app.modules.showroom_v2.services.storage_service import StorageService
-from app.modules.showroom_v2.services.qr_entity_service import QREntityService
+from app.core.storage.service import StorageService
+from app.core.qr.entity_service import QREntityService
 
 router = APIRouter()
 

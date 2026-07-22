@@ -1,7 +1,7 @@
 from typing import Dict, Any, List
 from app.services.export.pdf.base_renderer import BasePDFRenderer, ProfessionalPDF
 from app.services.export.core.render_context import RenderContext
-from app.services.export.core.storage_resolver import StorageResolver
+from app.core.storage.resolver import StorageResolver
 import os
 
 class BlockPDFRenderer(BasePDFRenderer):

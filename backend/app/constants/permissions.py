@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Permission(str, Enum):
 
     DASHBOARD_VIEW = "dashboard.view"
@@ -68,3 +69,38 @@ class Permission(str, Enum):
     SHOWROOM_VIEW = "showroom.view"
     SHOWROOM_CREATE = "showroom.create"
     SHOWROOM_UPDATE = "showroom.update"
+
+    EMPLOYEE_VIEW = "employee.view"
+    EMPLOYEE_CREATE = "employee.create"
+    EMPLOYEE_UPDATE = "employee.update"
+    EMPLOYEE_DELETE = "employee.delete"
+    EMPLOYEE_EXPORT = "employee.export"
+    EMPLOYEE_IMPORT = "employee.import"
+    EMPLOYEE_RESTORE = "employee.restore"
+    EMPLOYEE_AUDIT = "employee.audit"
+    EMPLOYEE_DOCUMENT = "employee.document"
+    EMPLOYEE_HISTORY = "employee.history"
+    EMPLOYEE_FAMILY = "employee.family"
+    EMPLOYEE_CONTRACT = "employee.contract"
+    EMPLOYEE_SALARY = "employee.salary"
+    EMPLOYEE_ASSET = "employee.asset"
+    EMPLOYEE_SKILL = "employee.skill"
+    EMPLOYEE_CERTIFICATION = "employee.certification"
+    EMPLOYEE_SHIFT = "employee.shift"
+
+    ORGANIZATION_VIEW = "organization.view"
+    ORGANIZATION_CREATE = "organization.create"
+    ORGANIZATION_UPDATE = "organization.update"
+    ORGANIZATION_DELETE = "organization.delete"
+
+    JOB_LEVEL_VIEW = "job_level.view"
+    JOB_LEVEL_CREATE = "job_level.create"
+    JOB_LEVEL_UPDATE = "job_level.update"
+    JOB_LEVEL_DELETE = "job_level.delete"
+
+    BANK_VIEW = "bank.view"
+    BANK_CREATE = "bank.create"
+    BANK_UPDATE = "bank.update"
+    BANK_DELETE = "bank.delete"
+
+    ADMIN_OVERRIDE = "admin.override"

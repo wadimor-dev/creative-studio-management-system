@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { SIDEBARS } from '../../config/sidebar';
 
-import SidebarGroup from './sidebar/SidebarGroup';
+import SidebarGroup from './Sidebar/SidebarGroup';
 
 import logoUrl from '../../assets/logo/logo.webp';
 
@@ -13,21 +13,12 @@ const Sidebar = ({ isOpen = false, onClose }) => {
 
   // Untuk sementara hardcode, nanti diganti berdasarkan division user
   const getSidebar = (user) => {
-    if (!user) return SIDEBARS.default;
+    if (!user || !user.roles) return SIDEBARS.default;
 
-    switch (user.role?.name) {
-      case 'ADMIN':
-        return SIDEBARS.admin;
-
-      case 'CREATIVE':
-        return SIDEBARS.creative;
-
-      case 'STAFF':
-        return SIDEBARS.creative;
-
-      default:
-        return SIDEBARS.default;
-    }
+    const roleNames = user.roles.map(r => r.name);
+    if (roleNames.includes('ADMIN')) return SIDEBARS.admin;
+    if (roleNames.includes('CREATIVE') || roleNames.includes('STAFF')) return SIDEBARS.creative;
+    return SIDEBARS.default;
   };
 
   const sidebar = getSidebar(user);

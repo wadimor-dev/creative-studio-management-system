@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 from typing import Optional
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 
 from app.common.responses import (
     SuccessResponse,
@@ -15,7 +15,6 @@ from app.common.pagination import (
     create_paginated_response,
 )
 
-from app.schemas.auth import TokenPayload
 from app.schemas.item import (
     ItemCreate,
     ItemUpdate,
@@ -30,7 +29,7 @@ from app.schemas.inventory import (
 from app.services.item_service import item_service
 from app.services.inventory_service import inventory_service
 
-from app.dependencies.auth import get_current_token_payload
+from app.dependencies.auth import get_current_user
 from app.dependencies.permission import RequirePermission
 
 from app.constants.permissions import Permission
@@ -92,13 +91,13 @@ def list_items(
 def create_item(
     item_in: ItemCreate,
     db: Session = Depends(get_db),
-    token: TokenPayload = Depends(get_current_token_payload),
+    current_user=Depends(get_current_user),
 ):
 
     item = item_service.create_item(
         db=db,
         item_in=item_in,
-        username=token.sub,
+        user_id=current_user.id,
     )
 
     return create_success_response(
@@ -149,14 +148,14 @@ def update_item(
     item_id: int,
     item_in: ItemUpdate,
     db: Session = Depends(get_db),
-    token: TokenPayload = Depends(get_current_token_payload),
+    current_user=Depends(get_current_user),
 ):
 
     item = item_service.update_item(
         db=db,
         item_id=item_id,
         item_in=item_in,
-        username=token.sub,
+        user_id=current_user.id,
     )
 
     return create_success_response(
@@ -251,12 +250,12 @@ def list_transactions(
 def create_transaction(
     tx_in: TransactionCreate,
     db: Session = Depends(get_db),
-    token: TokenPayload = Depends(get_current_token_payload),
+    current_user=Depends(get_current_user),
 ):
 
     transaction = inventory_service.process_transaction(
         db=db,
-        username=token.sub,
+        user_id=current_user.id,
         tx_in=tx_in,
     )
 

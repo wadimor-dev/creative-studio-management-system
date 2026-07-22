@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.models.product_stock import ProductPlacementStock
 from app.models.product import Product
 from app.schemas.product_placement import ProductPlacementStockResponse

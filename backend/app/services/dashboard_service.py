@@ -5,6 +5,7 @@ from collections import defaultdict
 import calendar
 
 from app.models.user import User
+from app.core.organization.employee.models import Employee
 from app.models.work_activity import WorkActivity
 from app.models.work_category import WorkCategory
 from app.models.item import Item
@@ -160,8 +161,9 @@ class DashboardService:
 
     def get_summary(self, db: Session, this_month_start: datetime) -> dict:
         eom = db.query(
-            User.full_name, User.username,
+            Employee.full_name, User.username,
             func.count(WorkActivity.id).label('count')
+        ).join(Employee, Employee.user_id == User.id, isouter=True
         ).join(WorkActivity, WorkActivity.user_id == User.id).filter(
             WorkActivity.status == WorkActivityStatus.COMPLETED,
             WorkActivity.end_time >= this_month_start

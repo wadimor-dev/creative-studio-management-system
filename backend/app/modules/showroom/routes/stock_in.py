@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.common.responses import create_success_response
 from app.constants.permissions import Permission
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.dependencies.auth import get_current_user
 from app.dependencies.permission import RequirePermission
 from app.models.user import User

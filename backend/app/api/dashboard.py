@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 
 from app.services.dashboard_service import dashboard_service
 

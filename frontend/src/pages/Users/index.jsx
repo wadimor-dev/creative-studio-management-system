@@ -33,15 +33,12 @@ const UsersPage = () => {
       // Extract username from email
       const generatedUsername = data.email.split('@')[0];
       
-      // Map role to integer ID (assuming ADMIN: 1, MANAGER: 2, STAFF: 3 based on typical seeds)
-      const roleIdMap = { 'Admin': 1, 'Manager': 2, 'Staff': 3 };
-      
       const payload = {
         username: generatedUsername,
         full_name: data.name,
         email: data.email,
         password: data.password || undefined,
-        role_id: roleIdMap[data.role] || 3,
+        role_ids: data.role_ids,
         is_active: data.status === '1'
       };
 

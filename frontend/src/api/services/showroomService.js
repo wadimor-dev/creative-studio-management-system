@@ -417,4 +417,52 @@ export const showroomService = {
   getSummaryHistory: (params) => {
     return apiClient.get(ENDPOINTS.SHOWROOM_V2.DASHBOARD_V2.SUMMARY_HISTORY, { params });
   },
+
+  // ==================== SHOWROOM MANAGEMENT ====================
+
+  getManageProducts: (params) => {
+    return apiClient.get(ENDPOINTS.SHOWROOM_V2.MANAGE.BASE, { params });
+  },
+
+  getMovementTypes: async () => {
+    const res = await apiClient.get(ENDPOINTS.SHOWROOM_V2.MANAGE.MOVEMENT_TYPES);
+    if (res?.data?.length) {
+      return { ...res, data: res.data.map(t => ({ value: t.code, label: t.name, direction: t.direction, notes: t.notes })) };
+    }
+    return res;
+  },
+
+  addManageProduct: (params) => {
+    return apiClient.post(ENDPOINTS.SHOWROOM_V2.MANAGE.BASE + '/add', null, { params });
+  },
+
+  addManageMovement: (params) => {
+    return apiClient.post(ENDPOINTS.SHOWROOM_V2.MANAGE.BASE + '/add', null, { params });
+  },
+
+  removeManageProduct: (stockId, params) => {
+    return apiClient.delete(`${ENDPOINTS.SHOWROOM_V2.MANAGE.BASE}/${stockId}`, { params });
+  },
+
+  getManageReport: (params) => {
+    return apiClient.get(ENDPOINTS.SHOWROOM_V2.MANAGE.REPORT, { params });
+  },
+
+  // ==================== MOVEMENT TYPES CRUD ====================
+
+  listMovementTypes: (params) => {
+    return apiClient.get(ENDPOINTS.SHOWROOM_V2.MOVEMENT_TYPES.BASE, { params });
+  },
+
+  createMovementType: (data) => {
+    return apiClient.post(ENDPOINTS.SHOWROOM_V2.MOVEMENT_TYPES.BASE, data);
+  },
+
+  updateMovementType: (id, data) => {
+    return apiClient.put(`${ENDPOINTS.SHOWROOM_V2.MOVEMENT_TYPES.BASE}/${id}`, data);
+  },
+
+  deleteMovementType: (id) => {
+    return apiClient.delete(`${ENDPOINTS.SHOWROOM_V2.MOVEMENT_TYPES.BASE}/${id}`);
+  },
 };

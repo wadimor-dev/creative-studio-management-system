@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 import enum
-from app.database.base import Base
+from app.core.database.base import Base
 
 class ProductStatus(str, enum.Enum):
     ACTIVE = "ACTIVE"

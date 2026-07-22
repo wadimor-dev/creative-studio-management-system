@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.modules.showroom_v2.routes import dashboard, dashboard_v2, sample, borrowing, guest, stock_control, reporting, master_data, public, storage, qr_scan
+from app.modules.showroom_v2.routes import dashboard, dashboard_v2, sample, borrowing, guest, stock_control, reporting, master_data, public, storage, qr_scan, manage, movement_types
 
 router = APIRouter()
 
@@ -14,3 +14,5 @@ router.include_router(master_data.router, prefix="/master-data", tags=["Showroom
 router.include_router(public.router, prefix="/public", tags=["Showroom Public"])
 router.include_router(storage.router, prefix="/storage", tags=["Showroom Storage"])
 router.include_router(qr_scan.router, prefix="/qr", tags=["Showroom QR Scan"])
+router.include_router(manage.router, prefix="/manage", tags=["Showroom Management"])
+router.include_router(movement_types.router, prefix="/movement-types", tags=["Showroom Movement Types"])

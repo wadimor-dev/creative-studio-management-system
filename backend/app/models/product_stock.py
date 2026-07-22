@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
-from app.database.base import Base
+from app.core.database.base import Base
 
 class ProductPlacementStock(Base):
     __tablename__ = "product_placement_stocks"

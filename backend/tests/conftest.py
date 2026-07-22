@@ -3,19 +3,14 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from jose import jwt
-from datetime import datetime, timedelta
 
-from app.database.base import Base
-from app.database.session import get_db
-from app.dependencies.auth import get_current_token_payload, get_current_user
+from app.core.database.base import Base
+from app.core.database.session import get_db
 from app.core.config import settings
-from app.core.jwt import ALGORITHM
-from app.schemas.auth import TokenPayload
 from app.models.user import User
 from app.models.role import Role
 from app.constants.role import RoleType
-from main import app
+from app.main import app
 
 # Create in-memory SQLite for testing
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
@@ -68,25 +63,33 @@ def client(db):
 
 @pytest.fixture(scope="function")
 def admin_user(db):
+    from app.core.authorization.repositories import user_role_repo
     user = User(
         username="admin_test",
         email="admin@test.com",
         hashed_password="hashed_password",
-        role_id=1,
         is_active=True
     )
     db.add(user)
     db.commit()
     db.refresh(user)
+    user_role_repo.set_user_roles(db, user.id, [1])
     return user
 
 @pytest.fixture(scope="function")
 def auth_client(client, admin_user):
-    # Create a valid token for admin_user
-    expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode = {"exp": expire, "sub": admin_user.username, "role": RoleType.ADMIN, "type": "access"}
-    token = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
-    
+    from app.core.database.session import SessionLocal
+    from app.core.auth.session import session_service as svc
+    db = SessionLocal()
+    try:
+        _, access_token, _ = svc.create_session(
+            db=db,
+            user_id=admin_user.id,
+        )
+    finally:
+        db.close()
+
+    token = access_token
     client.headers = {
         **client.headers,
         "Authorization": f"Bearer {token}"

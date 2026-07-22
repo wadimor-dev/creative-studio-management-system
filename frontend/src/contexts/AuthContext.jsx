@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
           console.error("Auth initialization failed:", error);
           localStorage.removeItem('token');
+          localStorage.removeItem('refresh_token');
           setUser(null);
         }
       }
@@ -36,8 +37,10 @@ export const AuthProvider = ({ children }) => {
       const response = await authService.login(credentials);
       if (response.success && response.data?.access_token) {
         localStorage.setItem('token', response.data.access_token);
-        
-        // Fetch profile immediately after login
+        if (response.data.refresh_token) {
+          localStorage.setItem('refresh_token', response.data.refresh_token);
+        }
+
         const profileResponse = await authService.getProfile();
         if (profileResponse.success) {
           setUser(profileResponse.data);
@@ -52,10 +55,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (e) {
+      // Ignore logout errors
+    }
     setUser(null);
     localStorage.removeItem('token');
-    // Optional: call backend logout endpoint if exists
+    localStorage.removeItem('refresh_token');
   };
 
   return (

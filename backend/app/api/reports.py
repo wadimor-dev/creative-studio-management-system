@@ -3,7 +3,7 @@ from typing import Any, Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 
 from app.common.responses import (
     SuccessResponse,
@@ -95,7 +95,7 @@ def get_reports(
         filters["division"] = division
 
     # STAFF hanya melihat report miliknya sendiri
-    if current_user.role.name != RoleType.ADMIN:
+    if not any(r.name == RoleType.ADMIN for r in current_user.roles):
         filters["user_id"] = current_user.id
     elif user_id:
         filters["user_id"] = user_id

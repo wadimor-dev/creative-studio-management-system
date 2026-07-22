@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from pydantic import BaseModel
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.models.product_movement import ProductMovementType, ProductMovementReason
 from app.models.product_stock import ProductPlacementStock
 from app.services.movement_engine import MovementEngine

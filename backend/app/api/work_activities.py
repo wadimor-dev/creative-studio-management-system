@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, Query, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.common.responses import SuccessResponse, create_success_response
 from app.schemas.work_activity import WorkActivityCreate, WorkActivityResponse, WorkActivityStartRequest
 from app.schemas.work_evidence import WorkEvidenceResponse
 from app.services.work_activity_service import work_activity_service
-from app.services.work_evidence_service import work_evidence_service
+from app.core.file.evidence_service import work_evidence_service
 from app.repositories.work_activity_repository import work_activity_repository
 from app.dependencies.auth import get_current_user
 from app.models.user import User
@@ -135,7 +135,7 @@ def get_work_activity(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    from app.exceptions.base import CSMSException
+    from app.core.exceptions import CSMSException
     activity = work_activity_repository.find_by_id(db, id)
     if not activity:
         raise CSMSException("Work activity not found", status_code=404)

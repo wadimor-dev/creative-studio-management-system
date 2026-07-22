@@ -1,6 +1,6 @@
 import pytest
 from app.services.auth_service import auth_service
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 from fastapi.security import OAuth2PasswordRequestForm
 from app.models.user import User
 

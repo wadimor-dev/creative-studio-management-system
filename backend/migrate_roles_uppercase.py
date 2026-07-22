@@ -16,7 +16,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from app.database.session import SessionLocal
+from app.core.database.session import SessionLocal
 from app.models.role import Role
 from app.models.user import User
 

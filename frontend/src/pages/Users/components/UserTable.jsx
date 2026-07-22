@@ -24,7 +24,17 @@ const UserTable = ({ data, onEdit, onDelete }) => {
     },
     {
       header: 'Role',
-      cell: (row) => <RoleBadge role={row.role?.name || row.role} />
+      cell: (row) => {
+        const roles = row.roles || [];
+        if (roles.length === 0) return <span className="text-slate-400 text-sm">—</span>;
+        return (
+          <div className="flex flex-wrap gap-1">
+            {roles.map(r => (
+              <RoleBadge key={r.id || r.name} role={r.name || r} />
+            ))}
+          </div>
+        );
+      }
     },
     {
       header: 'Status',

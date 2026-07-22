@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import List
+from typing import List, Optional
 import os
 
 class Settings(BaseSettings):
@@ -22,6 +22,17 @@ class Settings(BaseSettings):
         "http://csms.idekode.web.id",
     ]
     CORS_ALLOW_CREDENTIALS: bool = False
+
+    REDIS_URL: Optional[str] = os.getenv("REDIS_URL", None)
+    CACHE_DEFAULT_TTL: int = int(os.getenv("CACHE_DEFAULT_TTL", "300"))
+
+    SMTP_HOST: Optional[str] = os.getenv("SMTP_HOST", None)
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER: Optional[str] = os.getenv("SMTP_USER", None)
+    SMTP_PASSWORD: Optional[str] = os.getenv("SMTP_PASSWORD", None)
+    SMTP_FROM: str = os.getenv("SMTP_FROM", "noreply@csms.local")
+    SMTP_TLS: bool = os.getenv("SMTP_TLS", "true").lower() == "true"
+    SMTP_SSL: bool = os.getenv("SMTP_SSL", "false").lower() == "true"
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra="ignore")
 

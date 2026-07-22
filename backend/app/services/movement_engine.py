@@ -3,7 +3,7 @@ from app.models.product_movement import ProductMovement, ProductMovementType, Pr
 from app.models.product_stock import ProductPlacementStock
 from app.models.product import Product
 from app.models.product_placement import ProductPlacement
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 from typing import Optional
 
 class MovementEngine:

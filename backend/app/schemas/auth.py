@@ -1,12 +1,6 @@
-from pydantic import BaseModel
-from typing import Optional
-
-class Token(BaseModel):
-    access_token: str
-    refresh_token: Optional[str] = None
-    token_type: str = "bearer"
-
-class TokenPayload(BaseModel):
-    sub: Optional[str] = None
-    role: Optional[str] = None
-    type: Optional[str] = "access"
+from app.core.auth.schemas import (  # noqa: F401
+    Token,
+    TokenPayload,
+    LoginRequest,
+    RefreshRequest,
+)

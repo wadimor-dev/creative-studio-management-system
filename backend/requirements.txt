@@ -11,4 +11,5 @@ python-multipart
 openpyxl
 fpdf2
 qrcode[pil]
-bcrypt<5.0
+redis
+bcrypt<4.0

@@ -4,7 +4,7 @@ from app.repositories.item_repository import item_repo
 from app.schemas.inventory import TransactionCreate
 from app.models.inventory_transaction import InventoryMovementType
 from app.models.item_stock import ItemStock
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 from datetime import datetime, timezone, timedelta
 
 class InventoryService:

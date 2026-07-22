@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship, backref
-from app.database.base import Base
+from app.core.database.base import Base
 
 class PlacementType(Base):
     __tablename__ = "placement_types"

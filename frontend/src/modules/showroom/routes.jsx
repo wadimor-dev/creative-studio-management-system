@@ -10,6 +10,7 @@ import LocationManagement from './pages/LocationManagement';
 import StorageManagement from './pages/StorageManagement';
 import ScanStorage from './pages/ScanStorage';
 import QRGenerator from './pages/QRGenerator';
+import ShowroomManagement from './pages/ShowroomManagement';
 
 const ShowroomRoutes = () => (
   <Routes>
@@ -25,6 +26,7 @@ const ShowroomRoutes = () => (
     <Route path="qr-generator" element={<QRGenerator />} />
     <Route path="reports" element={<Reporting />} />
     <Route path="master-data" element={<MasterData />} />
+    <Route path="management" element={<ShowroomManagement />} />
   </Routes>
 );
 

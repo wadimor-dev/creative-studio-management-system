@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 import os
@@ -14,7 +14,7 @@ BACKUP_DIR = Path(__file__).resolve().parent.parent.parent / "storage" / "backup
 @router.get("/backups", summary="List available backups")
 def list_backups(current_user: User = Depends(get_current_user)):
     """List all available backup files."""
-    if current_user.role.name not in ["ADMIN", "SUPERADMIN"]:
+    if not any(r.name in ("ADMIN", "SUPERADMIN") for r in current_user.roles):
         raise HTTPException(status_code=403, detail="Not authorized")
         
     if not BACKUP_DIR.exists():
@@ -37,7 +37,7 @@ def list_backups(current_user: User = Depends(get_current_user)):
 @router.get("/backups/download/{filename}", summary="Download a backup file")
 def download_backup(filename: str, current_user: User = Depends(get_current_user)):
     """Download a specific backup file."""
-    if current_user.role.name not in ["ADMIN", "SUPERADMIN"]:
+    if not any(r.name in ("ADMIN", "SUPERADMIN") for r in current_user.roles):
         raise HTTPException(status_code=403, detail="Not authorized")
         
     file_path = BACKUP_DIR / filename
@@ -63,14 +63,14 @@ def trigger_backup(
     current_user: User = Depends(get_current_user)
 ):
     """Trigger a manual backup to run in the background."""
-    if current_user.role.name not in ["ADMIN", "SUPERADMIN"]:
+    if not any(r.name in ("ADMIN", "SUPERADMIN") for r in current_user.roles):
         raise HTTPException(status_code=403, detail="Not authorized")
         
     background_tasks.add_task(run_backup_task)
     
     # Log the activity
     from app.services.logger_service import logger_service
-    from app.database.session import SessionLocal
+    from app.core.database.session import SessionLocal
     with SessionLocal() as db:
         logger_service.log_activity(
             db=db,

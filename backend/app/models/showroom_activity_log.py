@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone, timedelta
-from app.database.base import Base
+from app.core.database.base import Base
 
 
 class ShowroomActivityLog(Base):

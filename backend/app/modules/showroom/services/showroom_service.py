@@ -9,7 +9,7 @@ from typing import List, Optional
 from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session, joinedload
 
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 from app.models.product import Product
 from app.models.product_movement import (
     ProductMovement,

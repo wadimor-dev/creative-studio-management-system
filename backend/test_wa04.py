@@ -2,7 +2,7 @@
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from app.database.session import SessionLocal
+from app.core.database.session import SessionLocal
 from app.models.user import User
 from app.models.item import Item
 from app.models.location import Location
@@ -13,7 +13,7 @@ from app.schemas.work_activity import WorkActivityCreate, WorkAssetPayload
 from app.services.work_activity_service import work_activity_service
 from app.models.work_evidence import WorkEvidence
 from datetime import datetime, timezone
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 
 def bypass_evidence(db, activity_id, user_id, type_):
     evidence = WorkEvidence(

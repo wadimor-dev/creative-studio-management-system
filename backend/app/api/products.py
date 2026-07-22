@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from typing import List
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.models.product import Product
 from app.models.product_master import ProductType, ProductCategory, ProductMotif, ProductSubMotif, ProductColor
 from app.schemas.product import ProductCreate, ProductUpdate, ProductResponse
@@ -10,7 +10,7 @@ from app.common.responses import SuccessResponse, create_success_response
 from app.common.pagination import PaginatedResponse, create_paginated_response, PaginationParams
 from app.dependencies.permission import RequirePermission
 from app.constants.permissions import Permission
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 
 router = APIRouter()
 

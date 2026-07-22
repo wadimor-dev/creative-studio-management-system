@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.models.product_movement import ProductMovement, ProductMovementType, ProductMovementReason
 from app.schemas.product_movement import (
     ProductMovementCreate,
@@ -10,7 +10,7 @@ from app.schemas.product_movement import (
 )
 from app.services.movement_engine import MovementEngine
 from app.common.responses import SuccessResponse, create_success_response
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 

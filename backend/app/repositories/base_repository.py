@@ -2,7 +2,7 @@ from typing import Generic, TypeVar, Type, Optional, List, Any, Dict
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, desc, asc
 from pydantic import BaseModel
-from app.database.base import Base
+from app.core.database.base import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)

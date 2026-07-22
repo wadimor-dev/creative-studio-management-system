@@ -2,7 +2,7 @@
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from app.database.session import SessionLocal
+from app.core.database.session import SessionLocal
 from app.services.report_engine import report_engine
 from app.services.dashboard_service import dashboard_service
 

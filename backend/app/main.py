@@ -2,13 +2,12 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from app.core.config import settings
 from app.core.lifespan import lifespan
-from app.config.cors import setup_cors
-from app.config.logging import setup_logging
-from app.middleware.request_id import RequestIDMiddleware
-from app.middleware.logging import LoggingMiddleware
-from app.exceptions.base import CSMSException
-from fastapi.exceptions import RequestValidationError
-from app.exceptions.validation import custom_exception_handler, validation_exception_handler
+from app.core.security.cors import setup_cors
+from app.core.security.logging import setup_logging
+from app.core.security.middleware import RequestIDMiddleware
+from app.core.security.middleware import LoggingMiddleware
+from app.core.exceptions import CSMSException
+from app.core.security.validation import custom_exception_handler, validation_exception_handler
 from app.api.health import router as health_router
 from app.api.users import router as users_router
 from app.api.auth import router as auth_router
@@ -81,6 +80,12 @@ app.include_router(showroom_router, prefix=f"{settings.API_V1_STR}/showroom", ta
 
 from app.modules.showroom_v2.routes import router as showroom_v2_router
 app.include_router(showroom_v2_router, prefix=f"{settings.API_V1_STR}/showroom-v2", tags=["showroom-v2"])
+
+from app.api.admin.permissions import router as admin_router
+app.include_router(admin_router, prefix=f"{settings.API_V1_STR}/admin", tags=["admin"])
+
+from app.api.employees import router as employees_router
+app.include_router(employees_router, prefix=f"{settings.API_V1_STR}/employees", tags=["employees"])
 
 @app.get("/")
 async def root():

@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Enum
 from sqlalchemy.orm import relationship
 import enum
 from datetime import datetime, timezone, timedelta
-from app.database.base import Base
+from app.core.database.base import Base
 
 class ProductMovementType(str, enum.Enum):
     IN = "IN"

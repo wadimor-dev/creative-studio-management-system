@@ -5,9 +5,9 @@ from app.models.work_activity import WorkActivity
 from app.constants.work_activity import WorkActivityStatus
 from app.schemas.work_activity import WorkActivityCreate, WorkActivityUpdate, WorkAssetPayload
 from app.repositories.work_activity_repository import work_activity_repository
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 from app.services.work_asset_service import work_asset_service
-from app.services.work_evidence_service import work_evidence_service
+from app.core.file.evidence_service import work_evidence_service
 from app.utils.generator import generate_work_reference
 
 

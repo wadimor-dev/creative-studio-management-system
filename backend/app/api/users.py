@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 
 from app.schemas.user import (
     UserResponse,
@@ -11,8 +11,6 @@ from app.schemas.user import (
 )
 
 from app.schemas.role import RoleResponse
-from app.schemas.auth import TokenPayload
-
 from app.common.responses import (
     SuccessResponse,
     create_success_response,
@@ -26,7 +24,7 @@ from app.common.pagination import (
 
 from app.services.user_service import user_service
 
-from app.dependencies.auth import get_current_token_payload
+from app.dependencies.auth import get_current_user, get_current_token_payload
 from app.dependencies.permission import RequirePermission
 
 from app.constants.permissions import Permission
@@ -34,7 +32,7 @@ from app.constants.permissions import Permission
 from app.repositories.user_repository import user_repo
 from app.repositories.role_repository import role_repo
 
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 
 router = APIRouter()
 
@@ -42,60 +40,38 @@ router = APIRouter()
 # PROFILE
 # =============================================================================
 
-@router.get(
-    "/profile",
-    response_model=SuccessResponse[UserResponse]
-)
+
+@router.get("/profile", response_model=SuccessResponse[UserResponse])
 def get_profile(
     db: Session = Depends(get_db),
-    token_payload: TokenPayload = Depends(get_current_token_payload),
+    current_user=Depends(get_current_user),
 ):
-    if not token_payload.sub:
-        raise CSMSException(
-            "Invalid token payload",
-            status_code=401
-        )
-
-    user = user_repo.get_by_username(db, token_payload.sub)
+    user = user_repo.get_by_id_with_roles(db, current_user.id)
 
     if not user:
-        raise CSMSException(
-            "User not found",
-            status_code=404
-        )
+        raise CSMSException("User not found", status_code=404)
 
     return create_success_response(
         data=user,
-        message="Profile fetched successfully"
+        message="Profile fetched successfully",
     )
 
 
-@router.put(
-    "/profile",
-    response_model=SuccessResponse[UserResponse]
-)
+@router.put("/profile", response_model=SuccessResponse[UserResponse])
 def update_profile(
     profile_in: ProfileUpdate,
     db: Session = Depends(get_db),
-    token_payload: TokenPayload = Depends(get_current_token_payload),
+    current_user=Depends(get_current_user),
 ):
-    user = user_repo.get_by_username(db, token_payload.sub)
-
-    if not user:
-        raise CSMSException(
-            "User not found",
-            status_code=404
-        )
-
     updated_user = user_service.update_profile(
         db,
-        user_id=user.id,
-        profile_in=profile_in
+        user_id=current_user.id,
+        profile_in=profile_in,
     )
 
     return create_success_response(
         data=updated_user,
-        message="Profile updated successfully"
+        message="Profile updated successfully",
     )
 
 
@@ -103,26 +79,22 @@ def update_profile(
 # ROLE
 # =============================================================================
 
+
 @router.get(
     "/roles",
     response_model=SuccessResponse[list[RoleResponse]],
     dependencies=[
-        Depends(
-            RequirePermission(Permission.ROLE_VIEW)
-        )
+        Depends(RequirePermission(Permission.ROLE_VIEW)),
     ],
 )
 def list_roles(
     db: Session = Depends(get_db),
 ):
-    roles, _ = role_repo.get_all(
-        db,
-        limit=0
-    )
+    roles = role_repo.get_all_with_permissions(db)
 
     return create_success_response(
         data=roles,
-        message="Roles fetched successfully"
+        message="Roles fetched successfully",
     )
 
 
@@ -130,13 +102,12 @@ def list_roles(
 # USERS
 # =============================================================================
 
+
 @router.get(
     "/",
     response_model=PaginatedResponse[UserResponse],
     dependencies=[
-        Depends(
-            RequirePermission(Permission.USER_VIEW)
-        )
+        Depends(RequirePermission(Permission.USER_VIEW)),
     ],
 )
 def list_users(
@@ -164,9 +135,7 @@ def list_users(
     response_model=SuccessResponse[UserResponse],
     status_code=status.HTTP_201_CREATED,
     dependencies=[
-        Depends(
-            RequirePermission(Permission.USER_CREATE)
-        )
+        Depends(RequirePermission(Permission.USER_CREATE)),
     ],
 )
 def create_user(
@@ -180,7 +149,7 @@ def create_user(
 
     return create_success_response(
         data=user,
-        message="User created successfully"
+        message="User created successfully",
     )
 
 
@@ -188,9 +157,7 @@ def create_user(
     "/{user_id}",
     response_model=SuccessResponse[UserResponse],
     dependencies=[
-        Depends(
-            RequirePermission(Permission.USER_VIEW)
-        )
+        Depends(RequirePermission(Permission.USER_VIEW)),
     ],
 )
 def get_user(
@@ -204,7 +171,7 @@ def get_user(
 
     return create_success_response(
         data=user,
-        message="User fetched successfully"
+        message="User fetched successfully",
     )
 
 
@@ -212,9 +179,7 @@ def get_user(
     "/{user_id}",
     response_model=SuccessResponse[UserResponse],
     dependencies=[
-        Depends(
-            RequirePermission(Permission.USER_UPDATE)
-        )
+        Depends(RequirePermission(Permission.USER_UPDATE)),
     ],
 )
 def update_user(
@@ -230,7 +195,7 @@ def update_user(
 
     return create_success_response(
         data=user,
-        message="User updated successfully"
+        message="User updated successfully",
     )
 
 
@@ -238,9 +203,7 @@ def update_user(
     "/{user_id}",
     response_model=SuccessResponse[dict],
     dependencies=[
-        Depends(
-            RequirePermission(Permission.USER_DELETE)
-        )
+        Depends(RequirePermission(Permission.USER_DELETE)),
     ],
 )
 def delete_user(
@@ -254,5 +217,5 @@ def delete_user(
 
     return create_success_response(
         data=None,
-        message="User deleted successfully"
+        message="User deleted successfully",
     )

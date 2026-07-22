@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.models.showroom_location import ShowroomLocation
 from app.models.showroom_sample_stock import ShowroomSampleStock
 from app.models.product import Product

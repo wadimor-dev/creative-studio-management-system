@@ -5,6 +5,7 @@ from collections import defaultdict
 import calendar
 
 from app.models.user import User
+from app.core.organization.employee.models import Employee
 from app.models.work_activity import WorkActivity
 from app.models.work_category import WorkCategory
 from app.models.work_asset import WorkAsset
@@ -143,7 +144,7 @@ class ReportEngine:
                 
         query = db.query(WorkActivity).options(
             joinedload(WorkActivity.user).joinedload(User.role),
-            joinedload(WorkActivity.user).joinedload(User.division),
+            joinedload(WorkActivity.user).joinedload(User.employee).joinedload(Employee.division),
             joinedload(WorkActivity.category),
             selectinload(WorkActivity.assets).joinedload(WorkAsset.item),
             selectinload(WorkActivity.assets).joinedload(WorkAsset.location),
@@ -193,7 +194,7 @@ class ReportEngine:
                 "id": act.id,
                 "date": act.end_time.isoformat() if act.end_time else (act.start_time.isoformat() if act.start_time else None),
                 "employee": act.user.full_name or act.user.username if act.user else "Unknown",
-                "division": act.user.division.name if act.user and getattr(act.user, 'division', None) else "Unassigned",
+                "division": act.user.employee.division.name if act.user and act.user.employee and act.user.employee.division else "Unassigned",
                 "category": act.category.name if act.category else "Uncategorized",
                 "activity": act.activity_name,
                 "duration_seconds": int(dur_seconds),

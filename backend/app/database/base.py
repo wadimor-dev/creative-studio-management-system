@@ -1,3 +1,1 @@
-from sqlalchemy.orm import declarative_base
-
-Base = declarative_base()
+from app.core.database.base import Base  # noqa: F401

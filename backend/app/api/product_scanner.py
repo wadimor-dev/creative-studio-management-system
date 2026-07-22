@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from app.database.session import get_db
+from app.core.database.session import get_db
 from app.models.product_placement import ProductPlacement
 from app.schemas.product_placement import ProductPlacementResponse
 from app.common.responses import SuccessResponse, create_success_response
-from app.exceptions.base import CSMSException
+from app.core.exceptions import CSMSException
 from app.models.product_stock import ProductPlacementStock
 from app.models.product import Product
 

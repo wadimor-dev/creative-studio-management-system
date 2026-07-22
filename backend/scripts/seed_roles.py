@@ -3,7 +3,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.database.session import SessionLocal
+from app.core.database.session import SessionLocal
 from app.models.role import Role
 
 ROLES = [
