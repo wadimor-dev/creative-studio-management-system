@@ -37,7 +37,9 @@ main.py::app
 
 ## Directory Inventory
 
-All paths relative to `backend/app/modules/clinic/`.
+The clinic module now lives at `backend/app/modules/hrd_ga/clinic/`. All paths below are relative to that directory unless noted.
+
+**Sub-module placeholders** (empty, for future use): `patient/`, `medical_record/`, `examination/`, `medicine/`, `pharmacy/`, `doctor/`, `laboratory/`, `referral/`, `reports/`.
 
 ### Core Entry Points
 

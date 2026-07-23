@@ -41,21 +41,21 @@ from app.core.organization.employee.models import Employee
 from app.core.organization.employee.models import EmploymentStatus, EmploymentType
 from app.core.authorization.models import UserRole
 
-from app.modules.clinic.models.patient_profile import PatientProfile, BloodType, Rhesus
-from app.modules.clinic.models.healthcare_professional import HealthcareProfessional, Profession, ProfessionalStatus
-from app.modules.clinic.models.queue import Queue, QueueStatus
-from app.modules.clinic.models.visit import Visit, VisitStatus, VisitType
-from app.modules.clinic.models.medical_record import MedicalRecord, MedicalRecordStatus
-from app.modules.clinic.models.soap_note import SOAPNote
-from app.modules.clinic.models.vital_sign import VitalSign
-from app.modules.clinic.models.diagnosis import Diagnosis, DiagnosisType
-from app.modules.clinic.models.icd10_code import ICD10Code
-from app.modules.clinic.models.medical_procedure import MedicalProcedure
-from app.modules.clinic.models.visit_procedure import VisitProcedure
-from app.modules.clinic.models.prescription import Prescription, PrescriptionStatus
-from app.modules.clinic.models.prescription_item import PrescriptionItem
-from app.modules.clinic.models.medicine_dispense import MedicineDispense
-from app.modules.clinic.models.medical_certificate import MedicalCertificate, CertificateType
+from app.modules.hrd_ga.clinic.models.patient_profile import PatientProfile, BloodType, Rhesus
+from app.modules.hrd_ga.clinic.models.healthcare_professional import HealthcareProfessional, Profession, ProfessionalStatus
+from app.modules.hrd_ga.clinic.models.queue import Queue, QueueStatus
+from app.modules.hrd_ga.clinic.models.visit import Visit, VisitStatus, VisitType
+from app.modules.hrd_ga.clinic.models.medical_record import MedicalRecord, MedicalRecordStatus
+from app.modules.hrd_ga.clinic.models.soap_note import SOAPNote
+from app.modules.hrd_ga.clinic.models.vital_sign import VitalSign
+from app.modules.hrd_ga.clinic.models.diagnosis import Diagnosis, DiagnosisType
+from app.modules.hrd_ga.clinic.models.icd10_code import ICD10Code
+from app.modules.hrd_ga.clinic.models.medical_procedure import MedicalProcedure
+from app.modules.hrd_ga.clinic.models.visit_procedure import VisitProcedure
+from app.modules.hrd_ga.clinic.models.prescription import Prescription, PrescriptionStatus
+from app.modules.hrd_ga.clinic.models.prescription_item import PrescriptionItem
+from app.modules.hrd_ga.clinic.models.medicine_dispense import MedicineDispense
+from app.modules.hrd_ga.clinic.models.medical_certificate import MedicalCertificate, CertificateType
 
 
 # ════════════════════════════════════════════════════════════════

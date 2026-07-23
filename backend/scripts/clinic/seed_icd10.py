@@ -10,8 +10,8 @@ os.environ.setdefault("DATABASE_URL", "mysql+pymysql://root:@localhost/csms_db")
 
 from sqlalchemy.orm import Session
 from app.core.database.session import SessionLocal
-from app.modules.clinic.services import icd10_code_service, medical_procedure_service
-from app.modules.clinic.schemas import ICD10CodeCreate, MedicalProcedureCreate
+from app.modules.hrd_ga.clinic.services import icd10_code_service, medical_procedure_service
+from app.modules.hrd_ga.clinic.schemas import ICD10CodeCreate, MedicalProcedureCreate
 
 
 COMMON_ICD10_CODES = [

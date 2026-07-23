@@ -205,8 +205,8 @@ Setiap service mengikuti pola yang konsisten:
 ```python
 # Contoh pola: patient_profile_service.py
 from app.core.database import get_db_session
-from app.modules.clinic.models.patient_profile import PatientProfile
-from app.modules.clinic.schemas import PatientProfileCreate, PatientProfileUpdate
+from app.modules.hrd_ga.clinic.models.patient_profile import PatientProfile
+from app.modules.hrd_ga.clinic.schemas import PatientProfileCreate, PatientProfileUpdate
 
 class PatientProfileService:
     def __init__(self):
