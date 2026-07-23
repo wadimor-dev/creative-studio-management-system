@@ -1,11 +1,8 @@
 import React from 'react';
-import { visitStatusBadge, visitStatusLabel } from '../helpers';
 
-const StatusBadge = ({ status }) => (
-  <span
-    className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${visitStatusBadge(status)}`}
-  >
-    {visitStatusLabel(status)}
+const StatusBadge = ({ label, className }) => (
+  <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${className || 'bg-slate-100 text-slate-600'}`}>
+    {label}
   </span>
 );
 

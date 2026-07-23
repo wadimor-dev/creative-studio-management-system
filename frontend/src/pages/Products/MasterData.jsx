@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import PageHeader from '../../components/common/PageHeader';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toastSuccess, toastError } from '../../utils/toast';
 
 import ProductsTabs from './components/ProductsTabs';
@@ -25,7 +25,14 @@ const MasterData = () => {
   const [activeTab, setActiveTab] = useState(MASTER_TABS[0].id);
   const activeTabConfig = MASTER_TABS.find(t => t.id === activeTab);
   
-  const { data, loading, refetch } = useProductMaster(activeTab);
+  const { data, loading, refetch, page, size, total, goToPage, changeSize } = useProductMaster(activeTab);
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(total / size)), [total, size]);
+  const pageNumbers = useMemo(() => {
+    if (totalPages <= 3) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const start = Math.max(1, Math.min(page - 1, totalPages - 2));
+    const end = start + 2;
+    return Array.from({ length: 3 }, (_, i) => start + i);
+  }, [totalPages, page]);
   
   const [formModal, setFormModal] = useState({ isOpen: false, data: null });
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, data: null });
@@ -121,50 +128,97 @@ const MasterData = () => {
                 <LoadingSpinner size="md" />
               </div>
             ) : (
-              <table className="w-full text-left border-collapse border border-slate-200 rounded-lg overflow-hidden">
-                <thead>
-                  <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
-                    <th className="p-3 font-medium border-b border-slate-200 w-24">ID</th>
-                    {activeTab !== 'locations' && <th className="p-3 font-medium border-b border-slate-200 w-32">Code</th>}
-                    <th className="p-3 font-medium border-b border-slate-200">Name</th>
-                    <th className="p-3 font-medium border-b border-slate-200 hidden sm:table-cell">Description</th>
-                    <th className="p-3 font-medium border-b border-slate-200 text-right w-24">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm divide-y divide-slate-100">
-                  {data.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="p-3 text-slate-500">#{item.id}</td>
-                      {activeTab !== 'locations' && <td className="p-3 font-semibold text-slate-700">{item.code}</td>}
-                      <td className="p-3 font-medium text-slate-900">{item.name}</td>
-                      <td className="p-3 text-slate-500 hidden sm:table-cell">{item.description || '-'}</td>
-                      <td className="p-3 text-right">
-                        <div className="flex justify-end gap-1">
-                          <button 
-                            onClick={() => openFormModal(item)}
-                            className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded transition-colors"
-                          >
-                            <Edit2 size={14} />
-                          </button>
-                          <button 
-                            onClick={() => openDeleteModal(item)}
-                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </td>
+              <>
+                <table className="w-full text-left border-collapse border border-slate-200 rounded-lg overflow-hidden">
+                  <thead>
+                    <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                      <th className="p-3 font-medium border-b border-slate-200 w-24">ID</th>
+                      {activeTab !== 'locations' && <th className="p-3 font-medium border-b border-slate-200 w-32">Code</th>}
+                      <th className="p-3 font-medium border-b border-slate-200">Name</th>
+                      <th className="p-3 font-medium border-b border-slate-200 hidden sm:table-cell">Description</th>
+                      <th className="p-3 font-medium border-b border-slate-200 text-right w-24">Actions</th>
                     </tr>
+                  </thead>
+                  <tbody className="text-sm divide-y divide-slate-100">
+                    {data.map((item) => (
+                      <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="p-3 text-slate-500">#{item.id}</td>
+                        {activeTab !== 'locations' && <td className="p-3 font-semibold text-slate-700">{item.code}</td>}
+                        <td className="p-3 font-medium text-slate-900">{item.name}</td>
+                        <td className="p-3 text-slate-500 hidden sm:table-cell">{item.description || '-'}</td>
+                        <td className="p-3 text-right">
+                          <div className="flex justify-end gap-1">
+                            <button 
+                              onClick={() => openFormModal(item)}
+                              className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded transition-colors"
+                            >
+                              <Edit2 size={14} />
+                            </button>
+                            <button 
+                              onClick={() => openDeleteModal(item)}
+                              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {data.length === 0 && (
+                      <tr>
+                        <td colSpan="5" className="p-8 text-center text-slate-500">
+                          No {activeTabConfig.label.toLowerCase()} found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+
+                <div className="flex items-center justify-between pt-4">
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <span>Show</span>
+                    <select
+                      value={size}
+                      onChange={(e) => changeSize(Number(e.target.value))}
+                      className="border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    >
+                      {[5, 10, 20, 50, 100].map((n) => (
+                        <option key={n} value={n}>{n}</option>
+                      ))}
+                    </select>
+                    <span>of {total} items</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => goToPage(page - 1)}
+                      disabled={page <= 1}
+                      className="p-1.5 rounded text-slate-500 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                  {pageNumbers.map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => goToPage(p)}
+                      className={`w-8 h-8 rounded text-sm font-medium transition-colors ${
+                        p === page
+                          ? 'bg-brand-600 text-white'
+                          : 'text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      {p}
+                    </button>
                   ))}
-                  {data.length === 0 && (
-                    <tr>
-                      <td colSpan="5" className="p-8 text-center text-slate-500">
-                        No {activeTabConfig.label.toLowerCase()} found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    <button
+                      onClick={() => goToPage(page + 1)}
+                      disabled={page >= totalPages}
+                      className="p-1.5 rounded text-slate-500 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>

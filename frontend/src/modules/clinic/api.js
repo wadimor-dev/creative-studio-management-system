@@ -1,351 +1,152 @@
-// frontend/src/modules/clinic/api.js
-import api from '../../api/axios'; // ⚠️ sesuaikan instance axios kamu
-import { VISIT_STATUS } from './constants';
+import api from '../../api/axios';
+import { ENDPOINTS } from '../../api/endpoints';
 
-export const MOCK = true;
-const delay = (ms = 300) => new Promise((r) => setTimeout(r, ms));
+const { CLINIC } = ENDPOINTS;
 
-/* =========================================================================
- *  KONTRAK RESPONSE (acuan backend dev)
- *  Employee      : { id, employee_no, full_name, department, is_active }
- *  Medicine      : { id, code, name, unit, stock, min_stock }
- *  Visit         : { id, visit_no, employee_id, employee_name, queue_no,
- *                    complaint, status, medical_record_id, created_at }
- *  MedicalRecord : { id, visit_id, employee_id, subjective, objective,
- *                    assessment, plan, items:[{medicine_id,name,qty}], created_at }
- *
- *  ALUR registerVisit (6 langkah backend):
- *   1) Register Visit  → terima {employee_id, complaint}
- *   2) Validate Employee → karyawan harus ada & aktif
- *   3) Create Queue    → nomor antrian hari ini
- *   4) Create Visit    → status WAITING
- *   5) Generate Medical Record → rekam medis kosong tertaut visit
- *   6) Return Response → { visit, queue_no, medical_record_id }
- * ========================================================================= */
-
-/* ---------- MOCK DATA ---------- */
-let mockEmployees = [
-  {
-    id: 1,
-    employee_no: 'EMP-001',
-    full_name: 'Budi Santoso',
-    department: 'Produksi',
-    is_active: true,
-  },
-  {
-    id: 2,
-    employee_no: 'EMP-002',
-    full_name: 'Siti Aminah',
-    department: 'Finance',
-    is_active: true,
-  },
-  {
-    id: 3,
-    employee_no: 'EMP-003',
-    full_name: 'Andi Nugroho',
-    department: 'Gudang',
-    is_active: false,
-  },
-];
-
-let mockMedicines = [
-  {
-    id: 1,
-    code: 'OBT-001',
-    name: 'Paracetamol 500mg',
-    unit: 'tablet',
-    stock: 120,
-    min_stock: 20,
-  },
-  {
-    id: 2,
-    code: 'OBT-002',
-    name: 'Amoxicillin 500mg',
-    unit: 'kapsul',
-    stock: 8,
-    min_stock: 15,
-  },
-  {
-    id: 3,
-    code: 'OBT-003',
-    name: 'Antasida',
-    unit: 'tablet',
-    stock: 60,
-    min_stock: 20,
-  },
-];
-
-let mockVisits = [];
-let mockRecords = [];
-let seq = { employee: 3, medicine: 3, visit: 0, record: 0 };
-
-const todayQueueCount = () =>
-  mockVisits.filter(
-    (v) => new Date(v.created_at).toDateString() === new Date().toDateString(),
-  ).length;
-
-/* ---------- API ---------- */
 export const clinicApi = {
-  /* ===== Employees ===== */
-  async getEmployees(params = {}) {
-    if (MOCK) {
-      await delay();
-      const q = (params.q || '').toLowerCase();
-      return mockEmployees.filter(
-        (e) =>
-          !q ||
-          e.full_name.toLowerCase().includes(q) ||
-          e.employee_no.toLowerCase().includes(q),
-      );
-    }
-    const { data } = await api.get('/clinic/employees', { params });
-    return data;
-  },
-  async createEmployee(payload) {
-    if (MOCK) {
-      await delay();
-      const id = ++seq.employee;
-      const created = { id, is_active: true, ...payload };
-      mockEmployees = [created, ...mockEmployees];
-      return created;
-    }
-    const { data } = await api.post('/clinic/employees', payload);
-    return data;
-  },
-  // import massal (dari CSV/Excel) — payload: array of { employee_no, full_name, department }
-  async importEmployees(list = []) {
-    if (MOCK) {
-      await delay();
-      const created = list.map((row) => ({
-        id: ++seq.employee,
-        is_active: true,
-        ...row,
-      }));
-      mockEmployees = [...created, ...mockEmployees];
-      return { imported: created.length, employees: created };
-    }
-    const { data } = await api.post('/clinic/employees/import', { rows: list });
-    return data;
-  },
+  /* ==================== PATIENTS ==================== */
+  getPatientProfiles(params) { return api.get(CLINIC.MASTER_DATA.PATIENT_PROFILES, { params }).then(r => r.data); },
+  getPatientProfile(id) { return api.get(CLINIC.MASTER_DATA.PATIENT_PROFILE(id)).then(r => r.data); },
+  getPatientProfileByEmployee(eid) { return api.get(CLINIC.MASTER_DATA.PATIENT_PROFILE_BY_EMPLOYEE(eid)).then(r => r.data); },
+  getPatientProfileByMr(mr) { return api.get(CLINIC.MASTER_DATA.PATIENT_PROFILE_BY_MR(mr)).then(r => r.data); },
+  createPatientProfile(payload) { return api.post(CLINIC.MASTER_DATA.PATIENT_PROFILES, payload).then(r => r.data); },
+  updatePatientProfile(id, payload) { return api.put(CLINIC.MASTER_DATA.PATIENT_PROFILE(id), payload).then(r => r.data); },
+  deletePatientProfile(id) { return api.delete(CLINIC.MASTER_DATA.PATIENT_PROFILE(id)).then(r => r.data); },
 
-  /* ===== Medicines (master obat + stok) ===== */
-  async getMedicines(params = {}) {
-    if (MOCK) {
-      await delay();
-      return mockMedicines;
-    }
-    const { data } = await api.get('/clinic/medicines', { params });
-    return data;
-  },
-  async createMedicine(payload) {
-    if (MOCK) {
-      await delay();
-      const id = ++seq.medicine;
-      const created = { id, stock: 0, min_stock: 10, ...payload };
-      mockMedicines = [created, ...mockMedicines];
-      return created;
-    }
-    const { data } = await api.post('/clinic/medicines', payload);
-    return data;
-  },
-  // tambah/kurangi stok manual (restock). delta boleh negatif
-  async adjustMedicineStock(id, delta) {
-    if (MOCK) {
-      await delay();
-      mockMedicines = mockMedicines.map((m) =>
-        m.id === Number(id) ? { ...m, stock: Math.max(0, m.stock + delta) } : m,
-      );
-      return mockMedicines.find((m) => m.id === Number(id));
-    }
-    const { data } = await api.patch(`/clinic/medicines/${id}/adjust`, {
-      delta,
-    });
-    return data;
-  },
+  /* ==================== HC PROFESSIONALS ==================== */
+  getHCProfessionals(params) { return api.get(CLINIC.MASTER_DATA.HEALTHCARE_PROFESSIONALS, { params }).then(r => r.data); },
+  getHCProfessional(id) { return api.get(CLINIC.MASTER_DATA.HEALTHCARE_PROFESSIONAL(id)).then(r => r.data); },
+  createHCProfessional(payload) { return api.post(CLINIC.MASTER_DATA.HEALTHCARE_PROFESSIONALS, payload).then(r => r.data); },
+  updateHCProfessional(id, payload) { return api.put(CLINIC.MASTER_DATA.HEALTHCARE_PROFESSIONAL(id), payload).then(r => r.data); },
+  deleteHCProfessional(id) { return api.delete(CLINIC.MASTER_DATA.HEALTHCARE_PROFESSIONAL(id)).then(r => r.data); },
 
-  /* ===== Visit flow (Register Visit) ===== */
-  async registerVisit({ employee_id, complaint }) {
-    if (MOCK) {
-      await delay();
-      // (2) Validate Employee
-      const emp = mockEmployees.find((e) => e.id === Number(employee_id));
-      if (!emp) throw new Error('Karyawan tidak ditemukan');
-      if (!emp.is_active)
-        throw new Error('Karyawan non-aktif, tidak bisa mendaftar');
+  /* ==================== ICD-10 CODES ==================== */
+  getICD10Codes(params) { return api.get(CLINIC.MASTER_DATA.ICD10_CODES, { params }).then(r => r.data); },
+  getICD10Code(id) { return api.get(CLINIC.MASTER_DATA.ICD10_CODE(id)).then(r => r.data); },
+  createICD10Code(payload) { return api.post(CLINIC.MASTER_DATA.ICD10_CODES, payload).then(r => r.data); },
+  updateICD10Code(id, payload) { return api.put(CLINIC.MASTER_DATA.ICD10_CODE(id), payload).then(r => r.data); },
+  deleteICD10Code(id) { return api.delete(CLINIC.MASTER_DATA.ICD10_CODE(id)).then(r => r.data); },
 
-      // (3) Create Queue
-      const queue_no = todayQueueCount() + 1;
-      // (4) Create Visit
-      const visitId = ++seq.visit;
-      // (5) Generate Medical Record (kosong)
-      const recordId = ++seq.record;
-      const record = {
-        id: recordId,
-        visit_id: visitId,
-        employee_id: emp.id,
-        subjective: '',
-        objective: '',
-        assessment: '',
-        plan: '',
-        items: [],
-        created_at: new Date().toISOString(),
-      };
-      mockRecords = [record, ...mockRecords];
+  /* ==================== MEDICAL PROCEDURES ==================== */
+  getMedicalProcedures(params) { return api.get(CLINIC.MASTER_DATA.MEDICAL_PROCEDURES, { params }).then(r => r.data); },
+  getMedicalProcedure(id) { return api.get(CLINIC.MASTER_DATA.MEDICAL_PROCEDURE(id)).then(r => r.data); },
+  createMedicalProcedure(payload) { return api.post(CLINIC.MASTER_DATA.MEDICAL_PROCEDURES, payload).then(r => r.data); },
+  updateMedicalProcedure(id, payload) { return api.put(CLINIC.MASTER_DATA.MEDICAL_PROCEDURE(id), payload).then(r => r.data); },
+  deleteMedicalProcedure(id) { return api.delete(CLINIC.MASTER_DATA.MEDICAL_PROCEDURE(id)).then(r => r.data); },
 
-      const visit = {
-        id: visitId,
-        visit_no: `VIS-${String(visitId).padStart(5, '0')}`,
-        employee_id: emp.id,
-        employee_name: emp.full_name,
-        queue_no,
-        complaint,
-        status: VISIT_STATUS.WAITING,
-        medical_record_id: recordId,
-        created_at: new Date().toISOString(),
-      };
-      mockVisits = [visit, ...mockVisits];
+  /* ==================== QUEUES ==================== */
+  getQueues(params) { return api.get(CLINIC.REGISTRATION.QUEUES, { params }).then(r => r.data); },
+  getCurrentQueue() { return api.get(CLINIC.REGISTRATION.QUEUE_CURRENT).then(r => r.data); },
+  getWaitingCount() { return api.get(CLINIC.REGISTRATION.QUEUE_WAITING_COUNT).then(r => r.data); },
+  getQueue(id) { return api.get(CLINIC.REGISTRATION.QUEUE(id)).then(r => r.data); },
+  createQueue(payload) { return api.post(CLINIC.REGISTRATION.QUEUES, payload).then(r => r.data); },
+  updateQueueStatus(id, status) { return api.put(CLINIC.REGISTRATION.QUEUE_STATUS(id), { status }).then(r => r.data); },
 
-      // (6) Return Response
-      return { visit, queue_no, medical_record_id: recordId };
-    }
-    const { data } = await api.post('/clinic/visits/register', {
-      employee_id,
-      complaint,
-    });
-    return data;
-  },
+  /* ==================== VISITS ==================== */
+  getVisits(params) { return api.get(CLINIC.REGISTRATION.VISITS, { params }).then(r => r.data); },
+  getVisit(id) { return api.get(CLINIC.REGISTRATION.VISIT(id)).then(r => r.data); },
+  getVisitDetail(id) { return api.get(CLINIC.REGISTRATION.VISIT_DETAIL(id)).then(r => r.data); },
+  createVisit(payload) { return api.post(CLINIC.REGISTRATION.VISITS, payload).then(r => r.data); },
+  updateVisit(id, payload) { return api.put(CLINIC.REGISTRATION.VISIT(id), payload).then(r => r.data); },
+  checkinVisit(id) { return api.put(CLINIC.REGISTRATION.VISIT_CHECKIN(id)).then(r => r.data); },
+  startServingVisit(id) { return api.put(CLINIC.REGISTRATION.VISIT_START_SERVING(id)).then(r => r.data); },
+  finishVisit(id) { return api.put(CLINIC.REGISTRATION.VISIT_FINISH(id)).then(r => r.data); },
+  cancelVisit(id) { return api.put(CLINIC.REGISTRATION.VISIT_CANCEL(id)).then(r => r.data); },
 
-  async getVisits(params = {}) {
-    if (MOCK) {
-      await delay();
-      return mockVisits.filter(
-        (v) => !params.status || v.status === params.status,
-      );
-    }
-    const { data } = await api.get('/clinic/visits', { params });
-    return data;
-  },
+  /* ==================== MEDICAL RECORDS ==================== */
+  getMedicalRecords(params) { return api.get(CLINIC.MEDICAL.MEDICAL_RECORDS, { params }).then(r => r.data); },
+  getMedicalRecord(id) { return api.get(CLINIC.MEDICAL.MEDICAL_RECORD(id)).then(r => r.data); },
+  getMedicalRecordByVisit(vid) { return api.get(CLINIC.MEDICAL.MEDICAL_RECORD_BY_VISIT(vid)).then(r => r.data); },
+  createMedicalRecord(payload) { return api.post(CLINIC.MEDICAL.MEDICAL_RECORDS, payload).then(r => r.data); },
+  updateMedicalRecord(id, payload) { return api.put(CLINIC.MEDICAL.MEDICAL_RECORD(id), payload).then(r => r.data); },
+  finalizeMedicalRecord(id) { return api.put(CLINIC.MEDICAL.MEDICAL_RECORD_FINALIZE(id)).then(r => r.data); },
 
-  // antrian hari ini: WAITING / IN_PROGRESS, urut nomor antrian
-  async getQueue() {
-    if (MOCK) {
-      await delay();
-      return mockVisits
-        .filter(
-          (v) =>
-            new Date(v.created_at).toDateString() === new Date().toDateString(),
-        )
-        .filter(
-          (v) =>
-            v.status === VISIT_STATUS.WAITING ||
-            v.status === VISIT_STATUS.IN_PROGRESS,
-        )
-        .sort((a, b) => a.queue_no - b.queue_no);
-    }
-    const { data } = await api.get('/clinic/visits/queue');
-    return data;
-  },
+  /* ==================== SOAP NOTES ==================== */
+  getSOAPNote(id) { return api.get(CLINIC.MEDICAL.SOAP_NOTE(id)).then(r => r.data); },
+  getSOAPNoteByVisit(vid) { return api.get(CLINIC.MEDICAL.SOAP_NOTE_BY_VISIT(vid)).then(r => r.data); },
+  createSOAPNote(payload) { return api.post(CLINIC.MEDICAL.SOAP_NOTES, payload).then(r => r.data); },
+  updateSOAPNote(id, payload) { return api.put(CLINIC.MEDICAL.SOAP_NOTE(id), payload).then(r => r.data); },
+  updateSOAPNoteByVisit(vid, payload) { return api.put(CLINIC.MEDICAL.SOAP_NOTE_BY_VISIT(vid), payload).then(r => r.data); },
 
-  async updateVisitStatus(id, status) {
-    if (MOCK) {
-      await delay();
-      mockVisits = mockVisits.map((v) =>
-        v.id === Number(id) ? { ...v, status } : v,
-      );
-      return mockVisits.find((v) => v.id === Number(id));
-    }
-    const { data } = await api.patch(`/clinic/visits/${id}/status`, { status });
-    return data;
-  },
+  /* ==================== VITAL SIGNS ==================== */
+  getVitalSign(id) { return api.get(CLINIC.MEDICAL.VITAL_SIGN(id)).then(r => r.data); },
+  getVitalSignByVisit(vid) { return api.get(CLINIC.MEDICAL.VITAL_SIGN_BY_VISIT(vid)).then(r => r.data); },
+  createVitalSign(payload) { return api.post(CLINIC.MEDICAL.VITAL_SIGNS, payload).then(r => r.data); },
+  updateVitalSign(id, payload) { return api.put(CLINIC.MEDICAL.VITAL_SIGN(id), payload).then(r => r.data); },
+  updateVitalSignByVisit(vid, payload) { return api.put(CLINIC.MEDICAL.VITAL_SIGN_BY_VISIT(vid), payload).then(r => r.data); },
 
-  /* ===== Medical Record + pengurangan stok obat ===== */
-  async getMedicalRecord(id) {
-    if (MOCK) {
-      await delay();
-      return mockRecords.find((r) => r.id === Number(id));
-    }
-    const { data } = await api.get(`/clinic/medical-records/${id}`);
-    return data;
-  },
-  async getMedicalRecords(params = {}) {
-    if (MOCK) {
-      await delay();
-      return mockRecords;
-    }
-    const { data } = await api.get('/clinic/medical-records', { params });
-    return data;
-  },
+  /* ==================== DIAGNOSES ==================== */
+  getDiagnosesByVisit(vid) { return api.get(CLINIC.MEDICAL.DIAGNOSES_BY_VISIT(vid)).then(r => r.data); },
+  createDiagnosis(payload) { return api.post(CLINIC.MEDICAL.DIAGNOSES, payload).then(r => r.data); },
+  updateDiagnosis(id, payload) { return api.put(CLINIC.MEDICAL.DIAGNOSIS(id), payload).then(r => r.data); },
+  deleteDiagnosis(id) { return api.delete(CLINIC.MEDICAL.DIAGNOSIS(id)).then(r => r.data); },
 
-  // simpan rekam medis + KURANGI STOK OBAT + tandai visit COMPLETED
-  // payload: { subjective, objective, assessment, plan, items:[{medicine_id, qty}] }
-  async completeMedicalRecord(recordId, payload) {
-    if (MOCK) {
-      await delay();
-      const record = mockRecords.find((r) => r.id === Number(recordId));
-      if (!record) throw new Error('Rekam medis tidak ditemukan');
+  /* ==================== VISIT PROCEDURES ==================== */
+  getVisitProceduresByVisit(vid) { return api.get(CLINIC.MEDICAL.VISIT_PROCEDURES_BY_VISIT(vid)).then(r => r.data); },
+  createVisitProcedure(payload) { return api.post(CLINIC.MEDICAL.VISIT_PROCEDURES, payload).then(r => r.data); },
+  updateVisitProcedure(id, payload) { return api.put(CLINIC.MEDICAL.VISIT_PROCEDURE(id), payload).then(r => r.data); },
+  deleteVisitProcedure(id) { return api.delete(CLINIC.MEDICAL.VISIT_PROCEDURE(id)).then(r => r.data); },
 
-      // validasi & kurangi stok
-      const items = (payload.items || []).map((it) => {
-        const med = mockMedicines.find((m) => m.id === Number(it.medicine_id));
-        if (!med) throw new Error(`Obat id ${it.medicine_id} tidak ditemukan`);
-        if (it.qty > med.stock)
-          throw new Error(`Stok "${med.name}" tidak cukup (sisa ${med.stock})`);
-        return { medicine_id: med.id, name: med.name, qty: it.qty };
-      });
-      // eksekusi pengurangan stok
-      items.forEach((it) => {
-        mockMedicines = mockMedicines.map((m) =>
-          m.id === it.medicine_id ? { ...m, stock: m.stock - it.qty } : m,
-        );
-      });
+  /* ==================== MEDICAL ATTACHMENTS ==================== */
+  getAttachmentsByVisit(vid) { return api.get(CLINIC.MEDICAL.ATTACHMENTS_BY_VISIT(vid)).then(r => r.data); },
+  createAttachment(payload) { return api.post(CLINIC.MEDICAL.ATTACHMENTS, payload).then(r => r.data); },
+  updateAttachment(id, payload) { return api.put(CLINIC.MEDICAL.ATTACHMENT(id), payload).then(r => r.data); },
+  deleteAttachment(id) { return api.delete(CLINIC.MEDICAL.ATTACHMENT(id)).then(r => r.data); },
 
-      const updated = { ...record, ...payload, items };
-      mockRecords = mockRecords.map((r) => (r.id === record.id ? updated : r));
-      // visit → COMPLETED
-      mockVisits = mockVisits.map((v) =>
-        v.id === record.visit_id ? { ...v, status: VISIT_STATUS.COMPLETED } : v,
-      );
-      return updated;
-    }
-    const { data } = await api.post(
-      `/clinic/medical-records/${recordId}/complete`,
-      payload,
-    );
-    return data;
-  },
+  /* ==================== PRESCRIPTIONS ==================== */
+  getPrescription(id) { return api.get(CLINIC.PHARMACY.PRESCRIPTION(id)).then(r => r.data); },
+  getPrescriptionByVisit(vid) { return api.get(CLINIC.PHARMACY.PRESCRIPTION_BY_VISIT(vid)).then(r => r.data); },
+  createPrescription(payload) { return api.post(CLINIC.PHARMACY.PRESCRIPTIONS, payload).then(r => r.data); },
+  updatePrescription(id, payload) { return api.put(CLINIC.PHARMACY.PRESCRIPTION(id), payload).then(r => r.data); },
+  dispensePrescription(id) { return api.put(CLINIC.PHARMACY.PRESCRIPTION_DISPENSE(id)).then(r => r.data); },
+  cancelPrescription(id) { return api.put(CLINIC.PHARMACY.PRESCRIPTION_CANCEL(id)).then(r => r.data); },
 
-  /* ===== Dashboard ===== */
+  /* ==================== PRESCRIPTION ITEMS ==================== */
+  getPrescriptionItemsByRx(rid) { return api.get(CLINIC.PHARMACY.PRESCRIPTION_ITEMS_BY_RX(rid)).then(r => r.data); },
+  createPrescriptionItem(payload) { return api.post(CLINIC.PHARMACY.PRESCRIPTION_ITEMS, payload).then(r => r.data); },
+  updatePrescriptionItem(id, payload) { return api.put(CLINIC.PHARMACY.PRESCRIPTION_ITEM(id), payload).then(r => r.data); },
+  deletePrescriptionItem(id) { return api.delete(CLINIC.PHARMACY.PRESCRIPTION_ITEM(id)).then(r => r.data); },
+
+  /* ==================== MEDICINE DISPENSES ==================== */
+  getMedicineDispense(id) { return api.get(CLINIC.PHARMACY.MEDICINE_DISPENSE(id)).then(r => r.data); },
+  createMedicineDispense(payload) { return api.post(CLINIC.PHARMACY.MEDICINE_DISPENSES, payload).then(r => r.data); },
+
+  /* ==================== MEDICAL CERTIFICATES ==================== */
+  getMedicalCertificate(id) { return api.get(CLINIC.CERTIFICATES.MEDICAL_CERTIFICATE(id)).then(r => r.data); },
+  getMedicalCertificateByVisit(vid) { return api.get(CLINIC.CERTIFICATES.MEDICAL_CERTIFICATE_BY_VISIT(vid)).then(r => r.data); },
+  createMedicalCertificate(payload) { return api.post(CLINIC.CERTIFICATES.MEDICAL_CERTIFICATES, payload).then(r => r.data); },
+  updateMedicalCertificate(id, payload) { return api.put(CLINIC.CERTIFICATES.MEDICAL_CERTIFICATE(id), payload).then(r => r.data); },
+  deleteMedicalCertificate(id) { return api.delete(CLINIC.CERTIFICATES.MEDICAL_CERTIFICATE(id)).then(r => r.data); },
+
+  /* ==================== ACTIVITY LOGS ==================== */
+  getActivityLogs(params) { return api.get(CLINIC.AUDIT.ACTIVITY_LOGS, { params }).then(r => r.data); },
+  createActivityLog(payload) { return api.post(CLINIC.AUDIT.ACTIVITY_LOGS, payload).then(r => r.data); },
+
+  /* ==================== DASHBOARD ==================== */
   async getDashboard() {
-    if (MOCK) {
-      await delay();
-      const today = mockVisits.filter(
-        (v) =>
-          new Date(v.created_at).toDateString() === new Date().toDateString(),
-      );
-      const byStatus = today.reduce((acc, v) => {
-        acc[v.status] = (acc[v.status] || 0) + 1;
-        return acc;
-      }, {});
-      return {
-        totals: {
-          employeesActive: mockEmployees.filter((e) => e.is_active).length,
-          visitsToday: today.length,
-          waitingCount: byStatus[VISIT_STATUS.WAITING] || 0,
-        },
-        visitsByStatus: byStatus,
-        todayQueue: today
-          .filter(
-            (v) =>
-              v.status === VISIT_STATUS.WAITING ||
-              v.status === VISIT_STATUS.IN_PROGRESS,
-          )
-          .sort((a, b) => a.queue_no - b.queue_no),
-        lowStockMedicines: mockMedicines.filter(
-          (m) => m.stock <= (m.min_stock ?? 10),
-        ),
-      };
-    }
-    const { data } = await api.get('/clinic/dashboard');
-    return data;
+    const [visitsR, queuesR, patientsR] = await Promise.all([
+      this.getVisits({ limit: 50 }),
+      this.getQueues({ limit: 50 }),
+      this.getPatientProfiles({ limit: 5 }),
+    ]);
+    const visits = Array.isArray(visitsR) ? visitsR : visitsR?.data || visitsR?.items || [];
+    const queues = Array.isArray(queuesR) ? queuesR : queuesR?.data || queuesR?.items || [];
+    const patients = Array.isArray(patientsR) ? patientsR : patientsR?.data || patientsR?.items || [];
+    const today = new Date().toDateString();
+    const todayVisits = visits.filter(v => v.visit_date && new Date(v.visit_date).toDateString() === today);
+    const todayQueues = queues.filter(q => q.queue_date && new Date(q.queue_date).toDateString() === today);
+    const byStatus = {};
+    todayVisits.forEach(v => { byStatus[v.visit_status] = (byStatus[v.visit_status] || 0) + 1; });
+    return {
+      totals: {
+        patientsActive: patients.length,
+        visitsToday: todayVisits.length,
+        waitingCount: todayQueues.filter(q => q.status === 'WAITING').length,
+        servingCount: todayQueues.filter(q => q.status === 'SERVING').length,
+      },
+      visitsByStatus: byStatus,
+      todayQueue: todayQueues.filter(q => q.status === 'WAITING' || q.status === 'CALLING').sort((a, b) => a.queue_number?.localeCompare?.(b.queue_number) || 0),
+      todayVisits: todayVisits.slice(0, 10),
+    };
   },
 };

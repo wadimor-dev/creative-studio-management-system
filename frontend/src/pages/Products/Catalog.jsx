@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PageHeader from '../../components/common/PageHeader';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import Badge from '../../components/common/Badge';
-import { Plus, Edit2, Trash2, Search, Image as ImageIcon, Package } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Image as ImageIcon, Package, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toastSuccess, toastError } from '../../utils/toast';
 
 import ProductsTabs from './components/ProductsTabs';
@@ -18,6 +18,9 @@ const Catalog = () => {
   const [filters, setFilters] = useState({});
   const { data: products, loading, refetch } = useProducts(filters);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
   
   const [formModal, setFormModal] = useState({ isOpen: false, data: null });
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, data: null });
@@ -61,13 +64,30 @@ const Catalog = () => {
     }
   };
 
-  // Safe array check because paginated response might return data inside .data (res.data.data) depending on interceptor
   const productArray = Array.isArray(products) ? products : (products?.data || []);
 
-  const filteredProducts = productArray.filter(p => 
-    p.display_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    p.sku.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = useMemo(() =>
+    productArray.filter(p => 
+      p.display_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      p.sku.toLowerCase().includes(searchTerm.toLowerCase())
+    ),
+    [productArray, searchTerm]
   );
+
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(filteredProducts.length / size)), [filteredProducts.length, size]);
+  const pageNumbers = useMemo(() => {
+    if (totalPages <= 3) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const start = Math.max(1, Math.min(page - 1, totalPages - 2));
+    return Array.from({ length: 3 }, (_, i) => start + i);
+  }, [totalPages, page]);
+
+  const paginatedProducts = useMemo(() =>
+    filteredProducts.slice((page - 1) * size, page * size),
+    [filteredProducts, page, size]
+  );
+
+  const goToPage = (p) => setPage(p);
+  const changeSize = (s) => { setSize(s); setPage(1); };
 
   return (
     <div>
@@ -118,7 +138,7 @@ const Catalog = () => {
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-slate-100">
-                {filteredProducts.map((item) => (
+                {paginatedProducts.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-4">
                       {item.image_url ? (
@@ -138,7 +158,7 @@ const Catalog = () => {
                         <Badge variant="default" className="text-[10px] py-0">{item.type?.name}</Badge>
                         <Badge variant="default" className="text-[10px] py-0">{item.category?.name}</Badge>
                         <Badge variant="default" className="text-[10px] py-0 bg-blue-50 text-blue-600 border-blue-200">{item.motif?.name}</Badge>
-                        <Badge variant="default" className="text-[10px] py-0 bg-rose-50 text-rose-600 border-rose-200">{item.color?.name}</Badge>
+                        {/* <Badge variant="default" className="text-[10px] py-0 bg-rose-50 text-rose-600 border-rose-200">{item.color?.name}</Badge> */}
                         {item.variant && <Badge variant="warning" className="text-[10px] py-0">{item.variant}</Badge>}
                       </div>
                     </td>
@@ -173,10 +193,56 @@ const Catalog = () => {
                   </tr>
                 )}
               </tbody>
-            </table>
+              </table>
+            )}
+          </div>
+          {!loading && filteredProducts.length > 0 && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200">
+              <div className="flex items-center gap-2 text-sm text-slate-600">
+                <span>Show</span>
+                <select
+                  value={size}
+                  onChange={(e) => changeSize(Number(e.target.value))}
+                  className="border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                >
+                  {[10, 25, 50, 100].map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+                <span>of {filteredProducts.length} items</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => goToPage(page - 1)}
+                  disabled={page <= 1}
+                  className="p-1.5 rounded text-slate-500 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                {pageNumbers.map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => goToPage(p)}
+                    className={`w-8 h-8 rounded text-sm font-medium transition-colors ${
+                      p === page
+                        ? 'bg-brand-600 text-white'
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+                <button
+                  onClick={() => goToPage(page + 1)}
+                  disabled={page >= totalPages}
+                  className="p-1.5 rounded text-slate-500 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
           )}
         </div>
-      </div>
 
       <Modal 
         isOpen={formModal.isOpen} 

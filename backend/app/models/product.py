@@ -18,7 +18,7 @@ class Product(Base):
     category_id = Column(Integer, ForeignKey("product_categories.id"), nullable=False)
     motif_id = Column(Integer, ForeignKey("product_motifs.id"), nullable=False)
     sub_motif_id = Column(Integer, ForeignKey("product_sub_motifs.id"), nullable=True)
-    color_id = Column(Integer, ForeignKey("product_colors.id"), nullable=False)
+    color_id = Column(Integer, ForeignKey("product_colors.id"), nullable=True)
     
     # Custom Attributes
     variant = Column(String(100), nullable=True)  # e.g., Reguler, Jumbo, Box

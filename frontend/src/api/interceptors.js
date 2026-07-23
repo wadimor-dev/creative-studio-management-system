@@ -22,7 +22,7 @@ export const setupInterceptors = (axiosInstance) => {
         config.headers.Authorization = `Bearer ${token}`;
       }
 
-      if (!config.headers['Content-Type'] && config.data && !(config.data instanceof URLSearchParams)) {
+      if (!config.headers['Content-Type'] && config.data && !(config.data instanceof URLSearchParams) && !(config.data instanceof FormData)) {
         config.headers['Content-Type'] = 'application/json';
       }
 

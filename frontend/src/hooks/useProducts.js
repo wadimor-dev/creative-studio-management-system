@@ -11,7 +11,7 @@ export const useProducts = (filters = {}) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await productService.getAll(currentFilters);
+      const res = await productService.getAll({ ...currentFilters, page: 1, size: 0 });
       if (res.success) {
         setData(res.data);
       } else {

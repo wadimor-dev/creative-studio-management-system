@@ -37,6 +37,21 @@ export default [
     ],
   },
 
+  {
+    title: 'Master Data',
+
+    children: [
+      {
+        icon: Settings,
+        name: 'Master Data',
+        path: '/products/master-data',
+        permission: 'PRODUCTS'
+      },
+    ],
+  },
+
+
+
   //   {
   //     title: 'Inventory',
 

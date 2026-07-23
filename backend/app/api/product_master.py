@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from typing import List, Type, Any
 
@@ -6,6 +6,7 @@ from app.core.database.session import get_db
 from app.models.product_master import ProductType, ProductCategory, ProductMotif, ProductSubMotif, ProductColor
 from app.schemas.product_master import ProductMasterCreate, ProductMasterUpdate, ProductMasterResponse
 from app.common.responses import SuccessResponse, create_success_response
+from app.common.pagination import PaginatedResponse, create_paginated_response, PaginationParams
 from app.dependencies.permission import RequirePermission
 from app.constants.permissions import Permission
 from app.core.exceptions import CSMSException
@@ -24,11 +25,17 @@ def _get_model(entity_type: str) -> Type[Any]:
         raise CSMSException(f"Invalid entity type: {entity_type}", status_code=400)
     return mapping[entity_type]
 
-@router.get("/{entity_type}", response_model=SuccessResponse[List[ProductMasterResponse]], dependencies=[Depends(RequirePermission(Permission.PRODUCT_MASTER_VIEW))])
-def get_master_data(entity_type: str, db: Session = Depends(get_db)):
+@router.get("/{entity_type}", response_model=PaginatedResponse[ProductMasterResponse], dependencies=[Depends(RequirePermission(Permission.PRODUCT_MASTER_VIEW))])
+def get_master_data(entity_type: str, db: Session = Depends(get_db), pagination: PaginationParams = Depends()):
     model = _get_model(entity_type)
-    items = db.query(model).all()
-    return create_success_response(data=items, message=f"{entity_type.capitalize()} fetched successfully")
+    query = db.query(model)
+    total = query.count()
+    if pagination.size == 0:
+        items = query.all()
+    else:
+        items = query.offset(pagination.skip).limit(pagination.size).all()
+    return create_paginated_response(data=items, total=total, page=pagination.page, size=pagination.size if pagination.size > 0 else total,
+                                      message=f"{entity_type.capitalize()} fetched successfully")
 
 @router.post("/{entity_type}", response_model=SuccessResponse[ProductMasterResponse], dependencies=[Depends(RequirePermission(Permission.PRODUCT_MASTER_CREATE))])
 def create_master_data(entity_type: str, item_in: ProductMasterCreate, db: Session = Depends(get_db)):

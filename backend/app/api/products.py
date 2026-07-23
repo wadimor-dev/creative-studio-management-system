@@ -85,13 +85,16 @@ def get_products(
     #     query = query.filter(Product.color_id == color_id)
         
     total = query.count()
-    items = query.offset(pagination.skip).limit(pagination.size).all()
+    if pagination.size == 0:
+        items = query.all()
+    else:
+        items = query.offset(pagination.skip).limit(pagination.size).all()
     
     return create_paginated_response(
         data=items,
         total=total,
         page=pagination.page,
-        size=pagination.size,
+        size=pagination.size if pagination.size > 0 else total,
         message="Products fetched successfully"
     )
 

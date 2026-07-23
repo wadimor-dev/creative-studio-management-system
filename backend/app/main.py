@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.core.lifespan import lifespan
 from app.core.security.cors import setup_cors
@@ -22,6 +23,7 @@ from app.api.product_movements import router as product_movements_router
 from app.api.product_stocks import router as product_stocks_router
 from app.api.locations import router as locations_router
 from app.api.work_activities import router as work_activities_router
+from app.api.product_images import router as product_images_router
 
 # Setup logging
 setup_logging()
@@ -45,6 +47,12 @@ setup_cors(app)
 app.add_exception_handler(CSMSException, custom_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
+# Static files
+import os
+storage_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "storage", "uploads")
+os.makedirs(storage_path, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=storage_path), name="uploads")
+
 # Routers
 app.include_router(health_router, prefix=settings.API_V1_STR)
 app.include_router(auth_router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
@@ -56,6 +64,7 @@ app.include_router(export_router, prefix=f"{settings.API_V1_STR}/export", tags=[
 app.include_router(categories_router, prefix=f"{settings.API_V1_STR}/categories", tags=["categories"])
 app.include_router(product_master_router, prefix=f"{settings.API_V1_STR}/product-master", tags=["product-master"])
 app.include_router(products_router, prefix=f"{settings.API_V1_STR}/products", tags=["products"])
+app.include_router(product_images_router, prefix=f"{settings.API_V1_STR}/product-images", tags=["product-images"])
 app.include_router(product_movements_router, prefix=f"{settings.API_V1_STR}/product-movements", tags=["product-movements"])
 app.include_router(product_stocks_router, prefix=f"{settings.API_V1_STR}/product-stocks", tags=["product-stocks"])
 app.include_router(locations_router, prefix=f"{settings.API_V1_STR}/locations", tags=["locations"])
@@ -86,6 +95,9 @@ app.include_router(admin_router, prefix=f"{settings.API_V1_STR}/admin", tags=["a
 
 from app.api.employees import router as employees_router
 app.include_router(employees_router, prefix=f"{settings.API_V1_STR}/employees", tags=["employees"])
+
+from app.api.clinic import router as clinic_router
+app.include_router(clinic_router, prefix=f"{settings.API_V1_STR}/clinic", tags=["clinic"])
 
 @app.get("/")
 async def root():

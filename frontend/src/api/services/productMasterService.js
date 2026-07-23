@@ -2,9 +2,16 @@ import apiClient from '../axios';
 import { ENDPOINTS } from '../endpoints';
 
 export const productMasterService = {
-  getAll: (entityType) => {
-    if (entityType === 'locations') return apiClient.get(ENDPOINTS.LOCATIONS);
-    return apiClient.get(`${ENDPOINTS.PRODUCT_MASTER}/${entityType}`);
+  getAll: (entityType, { page = 1, size = 10 } = {}) => {
+    const params = { page, size };
+    if (entityType === 'locations') return apiClient.get(ENDPOINTS.LOCATIONS, { params });
+    return apiClient.get(`${ENDPOINTS.PRODUCT_MASTER}/${entityType}`, { params });
+  },
+
+  getAllDropdown: (entityType) => {
+    const params = { page: 1, size: 0 };
+    if (entityType === 'locations') return apiClient.get(ENDPOINTS.LOCATIONS, { params });
+    return apiClient.get(`${ENDPOINTS.PRODUCT_MASTER}/${entityType}`, { params });
   },
   
   create: (entityType, data) => {

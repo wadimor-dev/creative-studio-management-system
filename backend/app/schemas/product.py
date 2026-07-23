@@ -8,7 +8,7 @@ class ProductBase(BaseModel):
     category_id: int
     motif_id: int
     sub_motif_id: Optional[int] = None
-    color_id: int
+    color_id: Optional[int] = None
     
     variant: Optional[str] = None
     image_url: Optional[str] = None

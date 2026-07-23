@@ -8,8 +8,6 @@ import { FilterX, Search, Filter } from 'lucide-react';
 import { productMasterService } from '../../api/services/productMasterService';
 import { userService } from '../../api/services/userService';
 import { categoryService } from '../../api/services/categoryService';
-import apiClient from '../../api/axios';
-import { ENDPOINTS } from '../../api/endpoints';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasPermission } from '../../utils/permissions';
 
@@ -44,16 +42,16 @@ const GlobalFilter = ({ availableFilters = [], onApply }) => {
         const promises = [];
         
         // Product Master Data
-        if (availableFilters.includes('type')) promises.push(productMasterService.getAll('types').then(res => ({ key: 'types', data: res.data })));
+        if (availableFilters.includes('type')) promises.push(productMasterService.getAllDropdown('types').then(res => ({ key: 'types', data: res.data })));
         // Categories can be product master or general categories. Product master has 'categories'
-        if (availableFilters.includes('category')) promises.push(productMasterService.getAll('categories').then(res => ({ key: 'categories', data: res.data })));
+        if (availableFilters.includes('category')) promises.push(productMasterService.getAllDropdown('categories').then(res => ({ key: 'categories', data: res.data })));
         if (availableFilters.includes('inventory_category')) promises.push(categoryService.getAll().then(res => ({ key: 'inventory_categories', data: res.data })));
-        if (availableFilters.includes('motif')) promises.push(productMasterService.getAll('motifs').then(res => ({ key: 'motifs', data: res.data })));
-        if (availableFilters.includes('sub_motif')) promises.push(productMasterService.getAll('sub-motifs').then(res => ({ key: 'sub_motifs', data: res.data })));
-        if (availableFilters.includes('color')) promises.push(productMasterService.getAll('colors').then(res => ({ key: 'colors', data: res.data })));
+        if (availableFilters.includes('motif')) promises.push(productMasterService.getAllDropdown('motifs').then(res => ({ key: 'motifs', data: res.data })));
+        if (availableFilters.includes('sub_motif')) promises.push(productMasterService.getAllDropdown('sub-motifs').then(res => ({ key: 'sub_motifs', data: res.data })));
+        if (availableFilters.includes('color')) promises.push(productMasterService.getAllDropdown('colors').then(res => ({ key: 'colors', data: res.data })));
         
         // Locations & Users
-        if (availableFilters.includes('location')) promises.push(apiClient.get(ENDPOINTS.LOCATIONS).then(res => ({ key: 'locations', data: res.data })));
+        if (availableFilters.includes('location')) promises.push(productMasterService.getAllDropdown('locations').then(res => ({ key: 'locations', data: res.data })));
 
         if (
             availableFilters.includes('user') &&
